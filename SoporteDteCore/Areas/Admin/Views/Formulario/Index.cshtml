@@ -1,0 +1,111 @@
+﻿@model SoporteDteCore.Models.Formulario
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h3 class="text-info">Formularios de clientes</h3>
+<p class="text-muted">Seleccione un formulario para revisarlo</p>
+<hr />
+<div class="table-responsive">
+    <table id="tableForm" class="table" width="100%">
+        <thead class="">
+            <tr>
+                <th>Representante Legal</th>
+                <th>Fecha Ingreso</th>
+                <th>Razón Social</th>
+                <th scope="col">Rut Empresa</th>
+                <th scope="col">¿Certificado Solicitado?</th>
+                <th scope="col">N° Pedido</th>
+                <th scope="col">Detalles</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!--Datatable-->
+        </tbody>
+    </table>
+</div>
+
+@section Scripts
+{
+
+    <script>
+
+    $(document).ready(function () {
+        $("#tableForm").DataTable({
+            "order": [[0, "desc"]],
+            responsive: true,
+            pageLength: 10,
+            destroy: true,
+            dom: 'Blfrtip',
+            searching: true,
+            buttons: [
+                'excel'
+            ],
+            ajax: {
+                url: "/Admin/Formulario/GetFormularios",
+                type: "GET",
+                datatype: "json",
+            },
+            "columns": [
+                { "data": "nombre" },        
+                {
+                    "data": "fechaIngreso",
+                    render: function (f) {
+                        if (moment(f).format("DD-MM-YYYY") == '01-01-0001') {
+                            return '<span class="text-danger">Fecha no fue registrada con anterioridad<span/>';
+                        } else {
+                            return moment(f).format("DD-MM-YYYY");
+                        }
+                    }
+                }, 
+                { "data": "razonSocial" },                
+                { "data": "rutEmpresa" },
+                {                   
+                   
+                    "data": "solicitado",
+                    render: function (d) {
+                        if (d == true)
+                            return "Certificado generado";
+                        else
+                            return "Pendiente"
+                    }
+                
+                },
+                { "data": "numeroPedido" },
+                {
+                    "mRender": function (data, type, row) {
+
+                        var btnEdit = '<a href="Formulario/Edit/' + row.id + '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Editar Formulario"><i class="fas fa-edit"></i><a/>';
+                        var btnDetails = '<a href="Formulario/Details/' + row.id + '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Detalles Formulario"><i class="far fa-file-alt"></i><a/>';
+
+                        return btnEdit + ' ' + btnDetails;
+                    }
+                }
+            ],
+            language: {
+                "decimal": "",
+                "emptyTable": "No hay información",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ Resultados",
+                "infoEmpty": "Mostrando 0 to 0 of 0 resultados",
+                "infoFiltered": "(Filtrado de _MAX_ total Resultados)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ Resultados",
+                "loadingRecords": "Cargando...",
+                "processing": "Procesando...",
+                "search": "Buscar:",
+                "zeroRecords": "Sin resultados encontrados",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Ultimo",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            }
+        });
+        orderDatatables();
+    });
+
+    </script>
+
+}

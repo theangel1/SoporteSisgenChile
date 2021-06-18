@@ -1,0 +1,97 @@
+﻿@model IEnumerable<SoporteDteCore.Models.Visita>
+
+@{
+    ViewData["Title"] = "Visitas Agendadas";
+}
+<div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-6">
+        <h3 class="text-info">Visitas Agendadas</h3>
+    </div>
+    <div class="col-sm-12 col-md-12 col-lg-6 text-right">
+        <a asp-action="Create" class="btn btn-outline-info col-sm-12 col-md-12 col-lg-4">Crear Visita</a>
+        <a asp-action="Desactivados" class="btn btn-outline-dark col-sm-12 col-md-12 col-lg-4">Desactivados</a>
+    </div>
+</div>
+<hr />
+<div class="table-responsive">
+    <table id="tableVisitas" class="table table-bordered table-hover" width="100%">
+        <thead>
+            <tr>
+                <th width="45%">
+                    @Html.DisplayNameFor(model => model.RazonSocial)
+                </th>
+
+                <th width="25%">
+                    @Html.DisplayNameFor(model => model.FechaProgramacion)
+                </th>
+
+                <th width="15%">
+                    @Html.DisplayNameFor(model => model.EstadoFinal)
+                </th>
+                <th width="15%"></th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#tableVisitas").DataTable({
+                pageLength: 5,
+                destroy: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'excel'
+                ],
+                ajax: {
+                    url: '/Admin/Visitas/GetVisitas',
+                    type: 'GET',
+                    dataType: 'json'
+                },
+                "columns": [
+                    { "data": "razonSocial" },
+                    {
+                        "data": "fechaProgramacion",
+                        "mRender": function (data, type, row) {
+                            return moment(data).format('YYYY-MM-DD, h:mm:ss a');
+                        }
+                    },
+                    { "data": "estadoFinal" },
+                    {
+                        "mRender": function (data, type, row) {
+                            var btnEdit = '<a href="Visitas/Edit/' + row.id + '" class="btn btn-outline-info btn-sm"><i class="fas fa-edit"></i><a/>';
+                            var btnDetails = '<a href="Visitas/Details/' + row.id + '" class="btn btn-outline-dark btn-sm"><i class="far fa-file-alt"></i><a/>';
+                            var btnDelete = '<a href="Visitas/Delete/' + row.id + '" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash-alt"></i><a/>';
+
+                            return btnEdit + ' ' + btnDetails + ' ' + btnDelete;
+                        }
+                    },
+                ],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Resultados",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 resultados",
+                    "infoFiltered": "(Filtrado de _MAX_ total Resultados)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Resultados",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+            orderDatatables();
+        });
+    </script>
+}

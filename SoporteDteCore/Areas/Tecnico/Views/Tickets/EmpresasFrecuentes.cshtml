@@ -1,0 +1,220 @@
+﻿@model IEnumerable<SoporteDteCore.Models.Ticket>
+
+<div class="row">
+    <div class="col-lg-6">
+        <h2 class="text-info ">Controlador de Tickets</h2>
+    </div>
+    <div class="col-lg-6 text-right">
+        <button class="btn btn-outline-info col-sm-12 col-md-12 col-lg-4" onclick="showTable(1)">Tickets Empresas</button>
+        <button class="btn btn-outline-info col-sm-12 col-md-12 col-lg-4" onclick="showTable(2)">Tickets Tecnicos</button>
+    </div>
+</div>
+<hr />
+<!-- Tickets por empresas -->
+<div id="tablaEmpresas" class="table-responsive">
+    <table cellspacing="5" cellpadding="5" border="0" >
+        <tbody>
+            <tr>
+                <td>
+                    Mín de Tickets Asociados:
+                </td>
+                <td>
+                    <input type="text" id="min" class="form-control">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <table id="tableEmp" class="table table-bordered table-hover" width="100%">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.RutCliente)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.RazonSocial)
+                </th>
+                <th>
+                    Total Tickets
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<!-- Tickets por Tecnico -->
+<div id="tablaTecnicos" class="table-responsive">
+    <table id="tableTec" class="table table-bordered table-hover" width="100%">
+        <thead>
+            <tr>
+                <th width="10%">NombreTecnico</th>
+                <th width="30%">Problema</th>
+                <th width="10%">FechaCierre</th>
+                <th width="10%">FechaCreacion</th>
+                <th width="10%">RutCliente</th>
+                <th width="20%">RazonSocial</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(() => {
+            $("#tablaEmpresas").hide();
+            $("#tablaTecnicos").hide();
+
+            // Start datatable "Tickets por empresas"
+            $("#tableEmp").dataTable({
+                "order": [[2, "desc"]],
+                pageLength: 5,
+                destroy: true,
+                dom: 'Blfrtip',
+                processing: true,
+                buttons: [
+                    'excel'
+                ],
+                ajax: {
+                    url: "/Tecnico/Tickets/EmpFrecuentes"
+                },
+                "columns": [
+                    { "data": "rutCliente" },
+                    { "data": "razonSocial" },
+                    { "data": "ticketsAsociados" }
+                ],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Resultados",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 resultados",
+                    "infoFiltered": "(Filtrado de _MAX_ total Resultados)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Resultados",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+
+            // Mínimo de registro en datatable
+            $.fn.dataTable.ext.search.push(
+                function (settings, data, dataIndex) {
+                    var min = parseInt($('#min').val(), 10);
+                    var cant = parseFloat(data[2]) || 0;
+
+                    if (isNaN(min) || min <= cant) {
+                        return true;
+                    }
+                    return false;
+                }
+            );
+
+            var tableEmp = $('#tableEmp').DataTable();
+
+            $('#min').keyup(function () {
+                tableEmp.draw();
+            });
+
+            // End datatable "Tickets por empresas"
+
+            /*---------------------------------------------------------------------*/
+
+            // Star datatable "Tickets por Tecnico"
+            $('#tableTec thead tr').clone(true).appendTo('#tableTec thead');
+            $('#tableTec thead tr:eq(1) th').each(function (i) {
+                var title = $(this).text();
+                $(this).html('<input type="text" placeholder="Buscar ' + title + '" />');
+
+                $('input', this).on('keyup change', function () {
+                    if (table.column(i).search() !== this.value) {
+                        table
+                            .column(i)
+                            .search(this.value)
+                            .draw();
+                    }
+                });
+            });
+
+            var table = $("#tableTec").DataTable({
+                orderCellsTop: true,
+                fixedHeader: true,
+                pageLength: 5,
+                destroy: true,
+                dom: 'Blrtip',
+                buttons: [
+                    'excel'
+                ],
+                ajax: {
+                    url: '/Tecnico/Tickets/ticketsByTechnician'
+                },
+                "columns": [
+                    { "data": "nombreTecnico" },
+                    { "data": "problema" },
+                    {
+                        "data": "fechaCierre",
+                        render: function (d) {
+                            return moment(d).format("YYYY-MM-DD");
+                        }
+                    },
+                    {
+                        "data": "fechaCreacion",
+                        render: function (d) {
+                            return moment(d).format("YYYY-MM-DD");
+                        }
+                    },
+                    { "data": "rutCliente" },
+                    { "data": "razonSocial" },
+                ],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Resultados",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 resultados",
+                    "infoFiltered": "(Filtrado de _MAX_ total Resultados)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Resultados",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+                
+            });
+
+            // End datatable "Tickets por Tecnico"
+
+            orderDatatables();
+        });
+
+        function showTable(id) {
+            if (id == 1) {
+                $("#tablaEmpresas").toggle();
+                $("#tablaTecnicos").hide();
+            } else if (id == 2) {
+                $("#tablaTecnicos").toggle();
+                $("#tablaEmpresas").hide();
+            } else {
+                return false;
+            }
+        }
+    </script>
+}

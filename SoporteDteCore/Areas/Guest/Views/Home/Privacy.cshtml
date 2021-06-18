@@ -1,0 +1,29 @@
+﻿@model SoporteDteCore.Models.ViewModels.ApuestasViewModel
+@{
+    ViewData["Title"] = "Tabla de puntos";
+}
+<div class="container-fluid">
+
+    <h3 class="text-info">@ViewData["Title"]</h3>
+    <h6 class="text-danger">Actualizado al @DateTime.Now</h6>
+    <img src="~/img/copa.png" class="img-fluid" />
+
+
+    <table class="table table-responsive-sm">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Puntos</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Apuestas.OrderByDescending(o => o.Value))
+            {
+                <tr>
+                    <td>@item.Key</td>
+                    <td>@item.Value</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

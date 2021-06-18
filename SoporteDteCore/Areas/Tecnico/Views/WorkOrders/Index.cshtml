@@ -1,0 +1,101 @@
+﻿@model IEnumerable<SoporteDteCore.Models.WorkOrder>
+
+@{
+    ViewData["Title"] = "Work Orders";
+}
+<div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-6">
+        <h3 class="text-info">Ordenes de Trabajo</h3>
+    </div>
+    <div class="col-sm-12 col-md-12 col-lg-6 text-right">
+        <a asp-action="Create" class="btn btn-outline-info col-sm-12 col-md-12 col-lg-1"
+           data-toggle="tooltip" data-placement="top" title="Crear Orden de Trabajo">
+            <i class="fas fa-plus"></i>
+        </a>
+    </div>
+</div>
+<hr />
+<div class="table-responsive">
+    <table class="table table-hover" id="tabla" width="100%">
+        <thead>
+            <tr>
+                <th style="width: 15%">Razon Social</th>
+                <th style="width: 10%">Rut Empresa</th>
+                <th style="width: 45%">Trabajo Realizado</th>
+                <th style="width: 10%">Hora Llegada</th>
+                <th style="width: 10%">Nombre Tecnico</th>
+                <th style="width: 10%">Opciones</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+
+            $("#tabla").DataTable({
+                "order": [[2, "desc"]],
+                pageLength: 10,
+                destroy: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'excel'
+                ],
+                ajax: {
+                    url: "/Tecnico/WorkOrders/GetIndex",
+                    type: "GET",
+                    datatype: "json"
+                },
+                "columns": [
+                    { "data": "razonSocial" },
+                    { "data": "rutEmpresa" },
+                    { "data": "trabajoRealizado" },
+                    {
+                        "data": "horaLlegada",
+                        "mRender": function (data, type, row) {
+                            return moment(data).format('YYYY-MM-DD h:mm:ss a');
+                        }
+                    },
+                    { "data": "nombreTecnico" },
+                    {
+                        "mRender": function (data, type, row) {
+                            var linkEdit = '<a href="WorkOrders/Edit/' + row.id + '" class="btn btn-outline-primary btn-sm">Editar<a/>';
+                            var linkDetail = '<a href="WorkOrders/details/' + row.id + '" class="btn btn-outline-info btn-sm">Detalles<a/>';
+
+                            return linkEdit + ' ' + linkDetail;
+                        }
+                    }
+                ],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Resultados",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 resultados",
+                    "infoFiltered": "(Filtrado de _MAX_ total Resultados)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Resultados",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+            orderDatatables();
+        });
+    </script>
+    @if (!string.IsNullOrEmpty(Context.Request.Query["mensaje"]))
+    {
+        <script type="text/javascript">
+            Swal.fire("¡Información!", '@Context.Request.Query["mensaje"]', "error");
+        </script>
+    }
+}

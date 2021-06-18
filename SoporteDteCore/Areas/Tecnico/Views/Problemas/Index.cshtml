@@ -1,0 +1,91 @@
+﻿@model IEnumerable<SoporteDteCore.Models.Problema>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-6">
+        <h3 class="text-info">Controlador Problemas</h3>
+    </div>
+    <div class="col-sm-12 col-md-12 col-lg-6 text-right">
+        <a asp-action="Create" class="btn btn-outline-info col-sm-12 col-md-12 col-lg-1"
+           data-toggle="tooltip" data-placement="top" title="Crear Nuevo Problema">
+            <i class="fas fa-plus"></i>
+        </a>
+    </div>
+</div>
+<hr />
+<div class="table-response">
+    <table id="tablaProblemas" class="table table-bordered" width="100%">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Nombre)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(() => {
+            $("#tablaProblemas").DataTable({
+                pageLength: 5,
+                destroy: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'excel'
+                ],
+                ajax: {
+                    url: "/Tecnico/Problemas/LoadProblemas",
+                    type: "GET",
+                    datatype: "json"
+                },
+                "columns": [
+                    { "data": "nombre" },
+                    {
+                        "mRender": function (data, type, row) {
+                            var btnEdit = '<a href="Problemas/Edit/' + row.id + '" class="btn btn-outline-info btn-sm"><i class="fas fa-edit"></i><a/>';
+                            var btnDelete = '<a href="Problemas/Delete/' + row.id + '" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash-alt"></i><a/>';
+
+                            return btnEdit + ' ' + btnDelete;
+                            console.log(data);
+                        }
+                    }
+                ],
+                columnDefs: [
+                    {
+                        targets: [0, 1],
+                        className: 'mdl-data-table__cell--non-numeric'
+                    }
+                ],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Resultados",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 resultados",
+                    "infoFiltered": "(Filtrado de _MAX_ total Resultados)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Resultados",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+            orderDatatables();
+        });
+    </script>
+}

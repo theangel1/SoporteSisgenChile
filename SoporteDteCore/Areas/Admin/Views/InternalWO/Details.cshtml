@@ -1,0 +1,49 @@
+﻿@model SoporteDteCore.Models.InternalWorkOrder
+@{
+    ViewData["Title"] = "Details";
+}
+<h3 class="text-info">Detalle orden de trabajo interna</h3>
+<hr />
+<form method="post" asp-action="Create">
+    <!--RUT Y NOMBRE-->
+    <div class="row">
+        <div class="form-group col-lg-6">
+            <label asp-for="@Model.RutCliente" class="control-label"></label>
+            <input readonly asp-for="@Model.RutCliente" class="form-control" />
+        </div>
+        <div class="form-group col-lg-6">
+            <label asp-for="@Model.NombreCliente" class="control-label"></label>
+            <input readonly asp-for="@Model.NombreCliente" class="form-control" />
+        </div>
+    </div>
+    <!--FECHA INICIO/TERMINO-->
+    <div class="row">
+        <div class="form-group col-lg-6">
+            <label asp-for="@Model.FechaInicio" class="control-label"></label>
+            <input readonly asp-for="@Model.FechaInicio" class="form-control" />
+        </div>
+        <div class="form-group col-lg-6">
+            <label asp-for="@Model.FechaTermino" class="control-label"></label>
+            <input readonly asp-for="@Model.FechaTermino" class="form-control" />
+        </div>
+    </div>
+    <!--OBSERVACION INICIAL-->
+    <div class="row">
+        <div class="form-group col-lg-12">
+            <label asp-for="@Model.Observacion" class="control-label"></label>
+            <input readonly asp-for="@Model.Observacion" class="form-control" />
+        </div>
+    </div>
+    <!--DESCRIPCIÓN-->
+    <div class="row">
+        <div class="form-group col-lg-12">
+            <label asp-for="@Model.Descripcion" class="control-label"></label>
+            <textarea readonly asp-for="@Model.Descripcion" class="form-control"></textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <a class="btn btn-outline-info col-sm-12 col-md-12 col-lg-2 col-xl-2" asp-route-id="@Model.Id" asp-action="Edit">Editar</a>
+        <a class="btn btn-outline-dark col-sm-12 col-md-12 col-lg-2 col-xl-2" asp-action="Index">Volver a la lista</a>
+    </div>
+</form>

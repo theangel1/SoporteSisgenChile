@@ -1,0 +1,122 @@
+﻿@model IEnumerable<SoporteDteCore.Models.Soporte>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="container-fluid">
+
+    <h3 class="text-primary">Controlador de Servicios</h3>
+
+    <p>
+        <a asp-action="Create" class="btn btn-outline-primary">Crear servicio</a>
+    </p>
+
+    <div class="row">
+        <div class="col-4">
+            <div class="alert alert-success">
+                Servicios activos: @ViewBag.activos
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="alert alert-warning">
+                Servicios Finalizados: @ViewBag.inactivos
+            </div>
+        </div>
+    </div>
+    <hr />
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.FechaInicio)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FechaFin)
+                </th>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.RazonSocialCliente)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Problema)
+                </th>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.ApplicationUser)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.FechaInicio.ToString("dd/MM/yyyy hh:mm tt")
+                    </td>
+                    <td>
+                        @if (item.FechaFin == DateTime.MinValue)
+                        {
+                            <label style="color:red">Servicio abierto</label>
+                        }
+                        else
+                        {
+                            @item.FechaFin.ToString("dd/MM/yyyy hh:mm tt")
+                        }
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RazonSocialCliente)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Problema)
+                    </td>
+                    <td>
+                        <label style="color:darkblue">@item.ApplicationUser.Nombre</label>
+                    </td>
+                    <td>
+                        <a asp-action="Edit" class="btn-sm btn btn-outline-info" asp-route-id="@item.Id">Editar</a>
+                        <a asp-action="Details" class="btn-sm btn btn-outline-secondary" asp-route-id="@item.Id">Detalles</a>
+                        <a asp-action="Delete" class="btn-sm btn btn-outline-danger" asp-route-id="@item.Id">Finalizar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="alert alert-info alert-dismissible fade show" role="alert">
+    <strong>¡Hola!</strong> El módulo de control de servicios implica lo siguiente:
+    <ul>
+        <li>Creación de servicios: Las fechas de inicio y fin se manejan a nivel backend, como también el técnico asociado.</li>
+        <li>Vista de servicios: Los técnicos verán solo sus servicios, mientras que los administradores y gerencia tendrán acceso a todos los datos.</li>
+        <li>Edición de servicios: Solo se puede editar un servicio activo.</li>
+        <li>Finalización de servicios: Solo se podrá finalizar un servicio que esté activo.</li>
+        <li>Detalle del servicio: Acá, se puede visualizar de forma extendida el servicio.</li>
+    </ul>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+
+
+
+
+@section Scripts{
+
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    @if (!string.IsNullOrEmpty(Context.Request.Query["mensaje"]))
+    {
+        <script type="text/javascript">
+
+            Swal.fire({
+                title: "Información",
+                html: '@Context.Request.Query["mensaje"]',
+                type: "info"
+            });
+
+        </script>
+    }
+}

@@ -1,0 +1,156 @@
+﻿@model IEnumerable<SoporteDteCore.Models.Control.ControlEstado>
+
+@{
+    ViewData["Title"] = "Control de Servicios";
+}
+
+<div class="container">
+    <h3 class="text-primary">@ViewData["Title"]</h3>
+
+    <p>
+        <a asp-action="Create" class="btn btn-outline-primary">   <i class="fas fa-plus"></i> Crear</a>
+    </p>
+    <div class="table-responsive">
+        <table class="table table-hover table-striped" id="example">
+            <thead>
+                <tr class="table-info">
+                    <th width="13%">
+                        @Html.DisplayNameFor(model => model.RutCliente)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.RazonSocial)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.TipoServicio)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FechaInicio)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Estado)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Estado)
+                    </th>
+
+                    <th>Opciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            $("#example").DataTable({
+                pageLength: 10,
+                destroy: true,
+                dom: 'Blfrtip',
+                "order": [5, "asc"],
+                buttons: [
+                    'excel'
+                ],
+                "columnDefs": [
+                    {
+                        "targets": [5],
+                        "visible": false,
+                        "searchable": false
+                    },
+                    {
+                        "targets": [5],
+                        "visible": false
+                    }
+                ],
+                ajax: {
+                    url: "/Tecnico/ControlEstados/GetServicios",
+                    type: "GET",
+                    datatype: "json",
+
+                },
+                "columns": [
+                    { "data": "usage.rutCliente" },
+                    { "data": "usage.razonSocial" },
+                    {
+
+                         "mRender": function (data, type, row) {
+                             switch (row.usage.tipoServicio) {
+                                 case 0: return "Facturación Electrónica";
+                                    break;
+                                 case 1: return "Boleta Electrónica";
+                                     break;
+                                 case 2: return "Factura Exportación";
+                                     break;
+
+
+
+                            }
+                        }
+                    },
+                    {
+                        "data": "usage.fechaInicio",
+                        "mRender": function (data, type, row) {
+                            return moment(data).format('DD-MM-YYYY');
+                        }
+                    },
+                    {
+
+                        "mRender": function (data, type, row) {
+                            switch (row.usage.estado) {
+                                case 0: return "<label style='color:#16A4AF'>SOLICITADO</label>";
+                                    break;
+                                case 1: return "CERTIFICACION";
+                                    break;
+                                case 2: return "VERIFICACION";
+                                    break;
+                                case 3: return "INSTALACION";
+                                    break;
+                                case 4: return "FIN_PROCESO";
+                                    break;
+                                default:
+
+                            }
+                        }
+
+                    },
+                    {"data":"usage.estado"},
+                    {
+                        "mRender": function (data, type, row) {
+                            var linkEdit = '<a href="ControlEstados/Edit/' + row.usage.id + ' " style="color:#166EAF">Actualizar<a/>';
+                            var linkDetail = '<a href="ControlEstados/Details/' + row.usage.id + '" style="color:#6916AF">Detalles<a/>';
+
+                           
+                            return linkEdit + ' ' + linkDetail;
+                        }
+                    }
+                ],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Resultados",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 resultados",
+                    "infoFiltered": "(Filtrado de _MAX_ total Resultados)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Resultados",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+            orderDatatables();
+        });
+    </script>
+}

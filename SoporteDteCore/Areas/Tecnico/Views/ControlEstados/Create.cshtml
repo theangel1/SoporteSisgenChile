@@ -1,0 +1,87 @@
+﻿@model SoporteDteCore.Models.Control.ControlEstado
+
+@{
+    ViewData["Title"] = "Crear Control de Estado";
+}
+
+<div class="container">
+    <h3 class="text-primary">@ViewData["Title"]</h3>
+    <hr />
+ 
+        
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group col-md-4">
+            <label asp-for="RutCliente" class="control-label"></label>
+            <input asp-for="RutCliente" class="form-control" onblur="valRut('rut');" id="rut" placeholder="Ej. 7616082-1" required />
+            <span asp-validation-for="RutCliente" class="text-danger"></span>
+        </div>
+        <div class="form-group col-md-8">
+            <label asp-for="RazonSocial" class="control-label"></label>
+            <input asp-for="RazonSocial" class="form-control" />
+            <span asp-validation-for="RazonSocial" class="text-danger"></span>
+        </div>
+
+        <div class="row col-lg-12">
+            <div class="form-group col-md-4">
+                <label asp-for="TipoServicio" class="control-label"></label>
+                <select asp-for="TipoServicio" class="form-control" asp-items="Html.GetEnumSelectList<SoporteDteCore.Models.Control.TipoServicio>()"></select>
+
+            </div>
+
+            <div class="form-group col-md-4">
+                <label asp-for="Estado" class="control-label"></label>
+                <select asp-for="Estado" class="form-control">
+                    <option value="@SoporteDteCore.Models.Control.EstadoCertificacion.SOLICITADO">Solicitado</option>
+                </select>
+            </div>
+        </div>
+        <div class="row col-lg-12">
+            <div class="form-group col-md-4">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" type="email" required/>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-4">
+                <label asp-for="Telefono" class="control-label"></label>
+                <input asp-for="Telefono" class="form-control" required/>
+                <span asp-validation-for="Telefono" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row col-lg-12">
+            <h4 class="text-primary">Detalle</h4>
+            <table class="table table-bordered" id="tablaDetalle">
+                <thead>
+                    <tr>
+                        <th>Observación</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <textarea asp-for="ControlDetalles[0].Observacion" class="form-control" value="Ingresar Detalle" rows="5" cols="50"></textarea>
+                            <input asp-for="ControlDetalles[0].Usuario" value="@User.Identity.Name.Substring(0, User.Identity.Name.ToString().LastIndexOf("@")).ToUpper()" type="hidden" />
+                        </td>
+
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="form-group col-md-4">
+            <input type="submit" value="Crear" class="btn btn-primary" /> |
+            <a asp-action="Index">Volver a control de estados</a>
+        </div>
+
+    </form>
+        
+
+
+
+
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

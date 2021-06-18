@@ -1,0 +1,133 @@
+﻿@model IEnumerable<SoporteDteCore.Models.Ticket>
+@{
+    ViewData["Title"] = "Tickets";
+}
+<div class="row">
+    <div class="col-sm-12 col-md-12  col-lg-6">
+        <h3 class="text-info col-sm-12 col-md-12 ">Listado de Tickets</h3>
+    </div>
+    <div class="col-sm-12 col-md-12 col-lg-6 text-right">
+        <a asp-action="Create" class="btn btn-outline-info col-sm-12 col-md-4 ">Crear Nuevo Ticket</a>
+        <a asp-action="Desactivados" class="btn btn-outline-dark col-sm-12 col-md-4 ">Tickets Desactivados</a>
+    </div>
+</div>
+<hr />
+<div id="division">
+    <div class="table-responsive">
+        <table id="tableTickets" class="table table-hover" width="100%">
+            <thead>
+                <tr>
+                    <th width="5%">@Html.DisplayNameFor(model => model.Id)</th>
+                    <th width="20%">@Html.DisplayNameFor(model => model.RazonSocial)</th>
+                    <th width="10%">@Html.DisplayNameFor(model => model.FechaCreacion)</th>
+                    <th width="13%">@Html.DisplayNameFor(model => model.NombreTecnico)</th>
+                    <th width="10%">@Html.DisplayNameFor(model => model.Prioridad)</th>
+                    <th width="20%">@Html.DisplayNameFor(model => model.Problema)</th>
+                    <th width="10%">@Html.DisplayNameFor(model => model.Estado)</th>
+                    <th width="20%">Opciones</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            var table = $("#tableTickets").DataTable({
+                "order": [[3, "asc"], [2, "desc"]],
+                pageLength: 25,
+                destroy: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'excel'
+                ],
+                ajax: {
+                    url: '/Tecnico/Tickets/GetTNoDesactivados',
+                    type: 'GET',
+                    dataType: 'json'
+                },
+                "columns": [
+                    {
+
+                        "mRender": function (data, type, row) {
+                            return "<label style='color:green'>" + row.id + "</label>"
+                        }
+                    },
+                    { "data": "razonSocial" },
+                    {
+                        "data": "fechaCreacion",
+                        render: function (data, type, row) {
+                            return moment(data).format(' DD/MM/YY, h:mm:ss a');
+                        }
+                    },
+                    { "data": "nombreTecnico" },
+                    {
+                        "mRender": function (data, type, row) {
+                            if (row.prioridad == "URGENTE") {
+                                return "<label style='color:red'>" + row.prioridad + "</label>"
+                            }
+                            else {
+                                return "<label>" + row.prioridad + "</label>"
+                            }
+                            
+                        }
+                    },
+                    { "data": "problema" },
+                    { "data": "estado" },
+                    {
+                        "mRender": function (data, type, row) {
+                            var btnEdit = '<a href="Tickets/Edit/' + row.id + '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Editar Ticket">Editar<a/>';
+                            var btnDetails = '<a href="Tickets/Details/' + row.id + '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Detalle Ticket">Detalles<a/>';
+
+                            if (row.nombreTecnico == "--Sin Asignar--")
+                                btnDetails = '';
+
+                            return btnEdit + btnDetails;
+                        }
+                    }
+                ],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Resultados",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 resultados",
+                    "infoFiltered": "(Filtrado de _MAX_ total Resultados)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Resultados",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+            orderDatatables();
+
+            setInterval(function () {
+                $("#division").fadeOut('slow');
+                table.ajax.reload();
+                $("#division").fadeIn('slow');
+            }, 20000);
+        });
+    </script>
+
+
+    @if (!string.IsNullOrEmpty(@Context.Request.Query["server"]))
+    {
+        <script>
+            Swal.fire("Información", '@Context.Request.Query["server"]', 'success');
+        </script>
+    }
+
+}
+
+

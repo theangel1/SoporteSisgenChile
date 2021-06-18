@@ -1,0 +1,202 @@
+﻿<!DOCTYPE html>
+<html lang="es-cl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Soporte Sisgen</title>
+
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    </environment>
+
+    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" href="//cdn.datatables.net/buttons/1.6.1/css/buttons.bootstrap4.min.css" />
+
+    <link rel="stylesheet" href="~/css/jquery-ui.css" />
+    <link rel="stylesheet" href="~/css/jquery.timepicker.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" asp-area="Guest" asp-controller="Home" asp-action="Index">
+                <img src="~/img/Sisgen Logo Baja-negro.png" width="100" height="50" class="d-inline-block align-top" alt="">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon ml-auto float-xs-right"></span>
+            </button>
+
+            <div class="navbar-collapse collapse">
+                @if (User.Identity.IsAuthenticated)
+                {
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Inicio
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" asp-action="Index" asp-controller="WorkOrders" asp-area="Tecnico"><i style="color:Highlight" class="fas fa-tools"></i> Ordenes de Trabajo</a>
+                            <a class="dropdown-item" asp-area="Admin" asp-controller="Visitas" asp-action="Index"><i class="fab fa-accessible-icon" style="color:darkorange"></i> Visitas</a>
+                            <a class="dropdown-item" asp-area="Admin" asp-controller="InternalWO" asp-action="Index"><i class="fas fa-briefcase" style="color:darkblue"></i> Ordenes de trabajo internas</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" asp-action="Index" asp-controller="Tickets" asp-area="Tecnico">
+                                <i style="color:darkgreen" class="fab fa-rocketchat"></i> Tickets
+                            </a>
+                            <a class="dropdown-item" asp-action="Desactivados" asp-controller="Tickets" asp-area="Tecnico" style="color:orangered">Tickets Desactivados</a>
+
+                            <a class="dropdown-item" asp-action="Produccion" asp-controller="Home" asp-area="Guest" style="color:green"><i class="fab fa-black-tie"></i> Vista Produccion</a>
+                            <a class="dropdown-item" asp-action="UserTickets" asp-controller="Tickets" asp-area="Tecnico">Mis Tickets</a>
+                            <a class="dropdown-item" asp-action="Index" asp-controller="Problemas" asp-area="Tecnico">Problemas</a>
+
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" style="color:chocolate" href="~/resources/llevar_a_movigen.rar" download><i class="fab fa-jedi-order"></i> Sisgen To MoviGen</a>
+
+                        </div>
+                    </li>
+                    @* <li class="nav-item dropdown">
+            <a ref="#" onclick="GetModalInformeProduccion(); return false;" class="nav-link ">Informe Producción</a>
+            <partial name="_ModalInformeProduccion" />
+        </li>
+                    *@
+
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Control de Servicios
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
+                            <a class="dropdown-item" asp-action="Index" asp-controller="Certificado" asp-area="Admin"><i style="color:green" class="fas fa-address-card"></i> Certificado Digital</a>
+                            <a class="dropdown-item" asp-action="Index" asp-controller="ControlEstados" asp-area="Tecnico"><i style="color:cornflowerblue" class="fab fa-medapps"></i> Control de Servicios</a>
+
+
+
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Operaciones
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown1">
+
+                            <a class="dropdown-item" asp-action="Enrolar" asp-controller="Customer" asp-area="Tecnico">Enrolar</a>
+                            <a class="dropdown-item" asp-action="Certificado" asp-controller="Customer" asp-area="Tecnico">Subir Certificado</a>
+                            <a class="dropdown-item" asp-action="Index" asp-controller="Customer" asp-area="Tecnico">Consultar ID</a>
+                            <div class="dropdown-divider"></div>
+
+                            <a class="dropdown-item" asp-area="Admin" asp-controller="Empresas" asp-action="Index"><i class="fas fa-building"></i> Fichas de Clientes</a>
+                            <a class="dropdown-item" asp-area="Admin" asp-controller="Formulario" asp-action="Index"><i class="fas fa-file-invoice"></i> Formularios</a>
+                            <a class="dropdown-item" asp-area="Tecnico" asp-controller="Tickets" asp-action="TicketsDerivados"><i class="fas fa-ticket-alt"></i> Tickets Derivados</a>
+
+
+
+                        </div>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown6" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Legacy
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown6">
+
+                            <a class="dropdown-item" asp-action="Index" asp-controller="BoletaElectronicas" asp-area="Tecnico">Boletas Electronicas</a>
+                            <a class="dropdown-item" asp-action="Index" asp-controller="FacturaElectronicas" asp-area="Tecnico">Factura Electronica</a>
+                            <a class="dropdown-item" asp-action="Index" asp-controller="FacturaExportacions" asp-area="Tecnico">Factura de Exportación</a>
+                            <a class="dropdown-item" asp-action="Index" asp-controller="GuiaElectronicas" asp-area="Tecnico">Guia Electronica</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" asp-area="Tecnico" asp-controller="Tickets" asp-action="EmpresasFrecuentes">Admin Tickets</a>
+                            <a class="dropdown-item" asp-area="Tecnico" asp-controller="Tickets" asp-action="TicketsConteo" asp-route-Type="Diario">Reporte Diario</a>
+                            <a class="dropdown-item" asp-area="Tecnico" asp-controller="Tickets" asp-action="TicketsConteo" asp-route-Type="Semanal">Reporte Semanal</a>
+                            <a class="dropdown-item" asp-area="Tecnico" asp-controller="Tickets" asp-action="TicketsConteo" asp-route-Type="Mensual">Reporte Mensual</a>
+                        </div>
+                    </li>
+
+
+                </ul>
+                }
+            </div>
+            <partial name="_LoginPartial" />
+        </div>
+    </nav>
+
+    <div class="container">
+        <partial name="_CookieConsentPartial" />
+        <main role="main" style="margin-top: 1.5%">
+            @RenderBody()
+        </main>
+        <hr />
+    </div>
+
+
+
+    <environment include="Development">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
+        </script>
+
+        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+
+        <script src="~/lib/Buttons-1.5.4/js/dataTables.buttons.min.js" asp-append-version="true"></script>
+        <script src="~/lib/Buttons-1.5.4/js/buttons.html5.min.js" asp-append-version="true"></script>
+        <script src="~/lib/Buttons-1.5.4/js/buttons.print.min.js" asp-append-version="true"></script>
+        <script src="~/lib/Buttons-1.5.4/js/buttons.colVis.min.js" asp-append-version="true"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" asp-append-version="true"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js" asp-append-version="true"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js" asp-append-version="true"></script>
+        <script src="~/js/jquery-ui.js" asp-append-version="true"></script>
+        <script src="~/js/jquery.timepicker.js" asp-append-version="true"></script>
+        <script src="~/js/filtertable/jquery.filtertable.min.js" asp-append-version="true"></script>
+
+    </environment>
+
+    <environment exclude="Development">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
+        </script>
+        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js" asp-append-version="true"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+
+        <script src="~/lib/Buttons-1.5.4/js/dataTables.buttons.min.js" asp-append-version="true"></script>
+        <script src="~/lib/Buttons-1.5.4/js/buttons.html5.min.js" asp-append-version="true"></script>
+        <script src="~/lib/Buttons-1.5.4/js/buttons.print.min.js" asp-append-version="true"></script>
+        <script src="~/lib/Buttons-1.5.4/js/buttons.colVis.min.js" asp-append-version="true"></script>
+        <script src="//cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js" asp-append-version="true"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" asp-append-version="true"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js" asp-append-version="true"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js" asp-append-version="true"></script>
+        <script src="~/js/jquery-ui.js" asp-append-version="true"></script>
+        <script src="~/js/jquery.timepicker.js" asp-append-version="true"></script>
+        <script src="~/js/filtertable/jquery.filtertable.min.js" asp-append-version="true"></script>
+    </environment>
+
+
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/WorkOrder.js" asp-append-version="true"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+    <script src="//cdn.datatables.net/plug-ins/1.10.19/sorting/datetime-moment.js"></script>
+
+    <script src="//cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+    <script src="//cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js"></script>
+    <script src="//cdn.datatables.net/buttons/1.6.1/js/buttons.bootstrap4.min.js"></script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

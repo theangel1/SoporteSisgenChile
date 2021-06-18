@@ -1,0 +1,139 @@
+﻿@model SoporteDteCore.Models.Empresa
+
+@{
+    ViewData["Title"] = "Ficha Cliente";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h3 class="text-primary">Ficha Cliente</h3>
+
+<dl class="row">
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.RutEmpresa)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.RutEmpresa)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.RazonSocial)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.RazonSocial)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.NombreFantasia)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.NombreFantasia)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.CorreoElectronico)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.CorreoElectronico)
+    </dd>
+
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.FullDireccion)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.FullDireccion)
+    </dd>
+
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.Correos)
+    </dt>
+    <dd class="col-sm-10">
+        @if (Model.Correos.Count() > 0)
+        {
+
+            @foreach (var item in Model.Correos)
+            {
+                <label>@item.Email </label><br />
+            }
+        }
+        else
+        {
+            <label>Sin correos asociados.</label>
+        }
+    </dd>
+
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.IsBlocked)
+    </dt>
+    <dd class="col-sm-10">
+        @if (Model.IsBlocked)
+        {
+            <label style="color:red">Cliente actualmente se encuentra bloqueado por nuestro sistema.</label>
+        }
+        else
+        {
+            <label style="color:forestgreen">Cliente se encuentra usando los servicios de forma óptima.</label>
+        }
+    </dd>
+
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.ObservacionCliente)
+    </dt>
+    <dd class="col-sm-10">
+        @if (Model.ObservacionCliente.Count() > 0)
+        {
+        <ul>
+            @foreach (var item in Model.ObservacionCliente)
+            {
+                <li>@item.Observacion </li>
+                
+            }
+        </ul>
+        }
+        else
+        {
+            <label>Sin observaciones</label>
+        }
+    </dd>
+
+
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.Telefonos)
+    </dt>
+    <dd class="col-sm-10">
+        @if (Model.Telefonos.Count() > 0)
+        {
+        <ul>
+            @foreach (var item in Model.Telefonos)
+            {
+                <li>@item.PhoneNumber </li>             
+            }
+        </ul>
+        }
+        else
+        {
+            <label>Sin teléfonos asociados.</label>
+        }
+    </dd>
+
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.ProductosCliente)
+    </dt>
+    <dd class="col-sm-10">
+        @if (Model.ProductosCliente.Count() > 0)
+        {
+        <ul>
+            @foreach (var item in Model.ProductosCliente)
+            {
+                <li>@item.Servicios </li>
+                
+            }
+        </ul>
+        }
+        else
+        {
+            <label>Sin servicios asociados.</label>
+        }
+    </dd>
+
+</dl>
+
+<div>
+    <a asp-action="Index" class="btn btn-outline-dark col-sm-12 col-md-12 col-lg-2">Volver</a>
+</div>

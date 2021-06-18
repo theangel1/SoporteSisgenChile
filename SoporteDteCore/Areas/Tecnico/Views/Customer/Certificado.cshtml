@@ -1,0 +1,97 @@
+﻿
+@{
+    ViewData["Title"] = "Certificado";
+}
+
+<h3 class="text-info">@ViewData["Title"]</h3>
+<hr />
+<form enctype="multipart/form-data" method="post" asp-action="Certificado">
+    <div class="row">
+        <div class="form-group col-sm-4">
+            <label>Rut</label>
+            <input class="form-control" required id="rut" name="rut" />
+        </div>
+        <div class="form-group col-sm-4">
+            <label>DV</label>
+            <input class="form-control" required id="dv" name="dv" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-sm-4">
+            <label>Nombre Certificado(con extensión)</label>
+            <input class="form-control" required placeholder="Ej: osvaldo.pfx" id="pfx" name="pfx" />
+        </div>
+        <div class="form-group col-sm-4">
+            <label>Clave Certificado</label>
+            <input class="form-control" required id="pass" name="pass" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-sm-4">
+            <label>Buscar Certificado</label>
+            <input type="file" id="file" name="file" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-sm-4">
+            <button type="submit" class="btn btn-outline-info" id="accion">Upload!</button>
+        </div>
+    </div>
+</form>
+
+<div class="row">
+    @if (ViewData["response"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @ViewData["response"]
+        </div>
+    }
+
+    @if (ViewData["error"] != null)
+    {
+        <div class="alert alert-warning" role="alert">
+            @ViewData["error"]
+        </div>
+    }
+</div>
+
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+
+        $("#accion").click(function () {
+
+            if ($('#rut').val() == '') {
+                Swal.fire("Error", "Debes ingresar un Rut!", "error");
+                return false;
+            }
+
+            if ($('#dv').val() == '') {
+                Swal.fire("Error!", "Debes ingresar digito verificador!", "error");
+                return false;
+            }
+            if ($('#pfx').val() == '') {
+                Swal.fire("Error!", "Debes ingresar nombre certificado!", "error");
+                return false;
+            }
+            if ($('#pass').val() == '') {
+                Swal.fire("Error!", "Debes ingresar contraseña!", "error");
+                return false;
+            }
+            if ($('#file').val() == '') {
+                Swal.fire("Error!", "Debes seleccionar archivo!", "error");
+                return false;
+            }
+
+        });
+
+
+    </script>
+
+
+
+}
+
+

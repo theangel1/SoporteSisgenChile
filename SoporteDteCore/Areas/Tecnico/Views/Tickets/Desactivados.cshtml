@@ -1,0 +1,96 @@
+﻿@model IEnumerable<SoporteDteCore.Models.Ticket>
+@{
+    ViewData["Title"] = "Tickets Desactivados";
+}
+<h3 class="text-primary">@ViewData["Title"]</h3>
+<hr />
+<div class="table-responsive">
+    <table id="tablaTick" class="table" style="width:100%;">
+        <thead>
+            <tr>
+                <th width="15%" style="color:cornflowerblue">Rut Cliente</th>                
+                <th width="15%">Fecha Cierre</th>
+                <th width="15%">Tiempo de resolución(Minutos)</th>
+                <th width="20%">Técnico</th>
+                <th width="40%">@Html.DisplayNameFor(model => model.Problema)</th>
+                <th width="10%"></th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+@section Scripts
+{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+                $("#tablaTick").DataTable({
+                "order": [[1, "desc"]],
+                responsive: true,
+                pageLength: 15,
+                destroy: true,
+                dom: 'Blfrtip',
+                filter: true,
+                buttons: [
+                    'excel'
+                ],
+                ajax: {
+                    url: "/Tecnico/Tickets/LoadTicketDes",
+                    type: "GET",
+                    datatype: "json",
+                },
+                "columns": [
+                    { "data": "usage.rutCliente" },                    
+                    {
+                        "data": "usage.fechaCierre",
+                        render: function (data, type, row) {
+                            return moment(data).format('YYYY-MM-DD, h:mm:ss a');
+                        }
+                    },
+                    { "data": "usage.tiempoResolucion" },       
+                    { "data": "usage.nombreTecnico" },
+                    { "data": "usage.problema" },
+                    {
+                        "mRender": function (data, type, row)
+                        {
+                            var linkDetail = '@Html.ActionLink("", "Details", new {id= -1 },new { @class = "btn btn-sm btn-success far fa-file-alt" })';
+                            linkDetail = linkDetail.replace("-1", row.usage.id);
+
+                            var linkDes = '@Html.ActionLink("", "Delete", new {id= -1 }, new { @class = "btn btn-sm btn-danger fa fa-trash" })';
+                            linkDes = linkDes.replace("-1", row.usage.id);
+
+                            return linkDetail + ' ' + linkDes;
+                        }
+                    },
+
+                ],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Resultados",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 resultados",
+                    "infoFiltered": "(Filtrado de _MAX_ total Resultados)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Resultados",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+            orderDatatables();
+        });
+    </script>
+}
+
+
+

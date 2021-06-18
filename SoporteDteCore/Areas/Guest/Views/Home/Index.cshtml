@@ -1,0 +1,55 @@
+﻿@model IEnumerable<SoporteDteCore.Models.Ticket>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@{
+    ViewData["Title"] = "Home";
+}
+<div class="container text-center">
+    <a href="https://sisgenchile.cl" target="_blank">
+        <img src="~/img/Sisgen Logo Baja-negro.png" class="rounded-sm" width="20%"| />
+    </a>
+</div>
+<br />
+
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="jumbotron">
+        <h4 class="display-4 text-primary">Accesos Directos <i class="far fa-arrow-alt-circle-right"></i></h4>
+        <p class="lead">Desde acá, podrás ir directamente a los módulos más usados del sistema.</p>
+        <hr class="my-4">
+
+        <ul>
+            <li>
+                <a class="dropdown-item"href="https://drive.google.com/drive/folders/1M07QuR7iIQ0Fdi4oXlJnKBJFXxhocT-x?usp=sharing" target="_blank">
+                    <i style="color:darkgreen" class="fab fa-google-drive"></i> Drive Instalación Factura Electrónica
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item" asp-action="Index" asp-controller="Tickets" asp-area="Tecnico">
+                    <i style="color:darkgreen" class="fab fa-rocketchat"></i> Tickets
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item" asp-action="Index" asp-controller="ControlEstados" asp-area="Tecnico"><i style="color:cornflowerblue" class="fab fa-medapps"></i> Control de Servicios</a>
+            </li>
+            <li>
+                <a class="dropdown-item" asp-area="Admin" asp-controller="Formulario" asp-action="Index"><i style="color:orangered" class="fas fa-file-invoice"></i> Formularios</a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="https://www4.sii.cl/certBolElectDteInternet/"><i style="color:deeppink" class="fab fa-simplybuilt"></i> Declaración de Cumplimiento Boletas Electrónicas</a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="https://portal.sisgenchile.cl" target="_blank"> Portal de clientes Sisgen FE</a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="https://sisgenchile.cl" target="_blank"> Web Sisgen</a>
+            </li>
+        </ul>
+    </div>
+}
+
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+}

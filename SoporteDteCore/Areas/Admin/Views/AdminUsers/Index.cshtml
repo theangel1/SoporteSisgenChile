@@ -1,0 +1,96 @@
+﻿@model IEnumerable<SoporteDteCore.Models.ViewModels.UserRolViewModel>
+@using SoporteDteCore.Utility
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h3 class="text-info">Usuarios</h3>
+<hr />
+<div class="table-responsive">
+    <table id="tableUsers" class="table table-bordered table-hover" width="100%">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(m => m.User.Email)</th>
+                <th>@Html.DisplayNameFor(m => m.User.Nombre)</th>
+                <th>Rol usuario</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+@section Scripts
+    {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        function Exito() {
+
+            Swal.fire({
+                title: 'Estado cambiado!',
+                text: 'El estado del usuario cambió con éxito',
+                html: '<p>Recuerde que un usuario <strong style=color:red;>desactivado</strong> no puede ingresar al sistema.</p>',
+                type: 'success',
+            });
+        }
+
+        $(document).ready(function () {
+            $("#tableUsers").DataTable({
+                pageLength: 5,
+                destroy: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'excel'
+                ],
+                ajax: {
+                    url: '/Admin/AdminUsers/GetUsers',
+                    type: "GET",
+                    datatype: "json"
+                },
+                "columns": [
+                    { "data": "email" },
+                    { "data": "nombre" },
+                    { "data": "rol" },
+                    {
+                        "data": "isEnable",
+                        "render": function (data) {
+                            switch (data) {
+                                case false:
+                                    return '<td><i class="fas fa-user text-success"></i></td>';
+                                case true:
+                                    return '<td><i class="fas fa-user-slash text-danger"></i></td>';
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                ],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Resultados",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 resultados",
+                    "infoFiltered": "(Filtrado de _MAX_ total Resultados)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Resultados",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+            orderDatatables();
+        });
+    </script>
+
+
+}

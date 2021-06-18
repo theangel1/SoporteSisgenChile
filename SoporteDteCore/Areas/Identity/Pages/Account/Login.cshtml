@@ -1,0 +1,89 @@
+﻿@page
+@model LoginModel
+@{
+    Layout = "/Views/Shared/_LayoutLogin.cshtml";
+}
+@{
+    ViewData["Title"] = "Log in";
+}
+<div class="area">
+    <ul class="circles">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-sm-12 col-md-12 col-lg-7 col-xl-7 cajaCustom" id="login">
+                <div class="form-block p-30 border-clear trans">
+                    <form id="account" method="post">
+                        <div class="box-header">
+                            <img src="~/img/Logo sobre fondo negro. Baja[509].jpg" alt="Logo de Sisgen" />
+                        </div>
+                        <h3 class="text-white font-italic">Soporte Sisgen Chile.</h3>
+                        <hr class="bg-white" />
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Input.Email" class="text-white font-italic"></label>
+                            <input asp-for="Input.Email" class="form-control" />
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Input.Password" class="text-white font-italic"></label>
+                            <input asp-for="Input.Password" class="form-control" />
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-outline-light btn-block btn-lg"><i class="fas fa-key"></i> Log in</button>
+                            <a class="btn btn-outline-light btn-block btn-lg" asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Registrate</a>
+                        </div>
+                    </form>
+                </div>
+                <h6 class="text-white text-center font-italic">
+                    © @DateTime.Now.Year - Soporte Sisgen
+                </h6>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $("#login").fadeIn(2.0 * 1000);
+        });
+    </script>
+    @if (TempData["mensaje"] != null)
+    {
+        <script>
+            Swal.fire("Soporte Sisgen", '@TempData["mensaje"]', "info");
+        </script>
+    }
+
+    @if (TempData["POST"] != null)
+    {
+        <script>
+            Swal.fire("Soporte Sisgen", '@TempData["POST"]', "success");
+        </script>
+    }
+    @if (TempData["reset"] != null)
+    {
+        <script>
+            Swal.fire("Soporte Sisgen", '@TempData["reset"]', "success");
+        </script>
+    }
+    @if (TempData["mensajeInvalid"] != null)
+    {
+        <script>
+            Swal.fire("Soporte Sisgen", '@TempData["mensajeInvalid"]', "error")
+        </script>
+    }
+}

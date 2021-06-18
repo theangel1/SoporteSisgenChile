@@ -1,0 +1,59 @@
+﻿@model IEnumerable<SoporteDteCore.Models.Ticket>
+
+@{
+    ViewData["Title"] = "Historial de Tickets";
+}
+    <div class="container">
+
+        <h3 class="text-primary">@ViewData["Title"]</h3>
+
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.RutCliente)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.RazonSocial)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FechaCreacion)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FechaCierre)
+                    </th>
+               
+                    <th>
+                        @Html.DisplayNameFor(model => model.Problema)
+                    </th>
+                  
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.RutCliente)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.RazonSocial)
+                        </td>
+                        <td>
+                            @item.FechaCreacion.ToString("dd-MM-yyyy")
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FechaCierre)
+                        </td>
+                       
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Problema)
+                        </td>                      
+                      
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>

@@ -1,0 +1,127 @@
+﻿@model IEnumerable<SoporteDteCore.Models.InternalWorkOrder>
+@{
+    ViewData["Title"] = "Desactivados";
+}
+<div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-6">
+        <h3 class="text-info">Ordenes de trabajo terminadas</h3>
+    </div>
+    <div class="col-sm-12 col-md-12 col-lg-6 text-right">
+        <a asp-action="Index" class="btn btn-outline-dark"><i class="fas fa-arrow-left"></i></a>
+    </div>
+</div>
+<hr />
+<div class="table-responsive" id="divAngels">
+    @if (Model.Where(i => i.IsValid == false).Count() > 0)
+    {
+        <table id="tablaTick" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th width="10%" style="color:red;">@Html.DisplayNameFor(model => model.RutCliente)</th>
+                    <th width="20%">@Html.DisplayNameFor(model => model.NombreCliente)</th>
+                    <th>@Html.DisplayNameFor(model => model.FechaInicio)</th>
+                    <th>@Html.DisplayNameFor(model => model.FechaTermino)</th>
+                    <th>@Html.DisplayNameFor(model => model.Observacion)</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+            <tfoot>
+                <tr>
+                    <th style="color:red;">@Html.DisplayNameFor(model => model.RutCliente)</th>
+                    <th>@Html.DisplayNameFor(model => model.NombreCliente)</th>
+                    <th>@Html.DisplayNameFor(model => model.FechaInicio)</th>
+                    <th>@Html.DisplayNameFor(model => model.FechaTermino)</th>
+                    <th>@Html.DisplayNameFor(model => model.Observacion)</th>
+                    <th>Acción</th>
+                </tr>
+            </tfoot>
+        </table>
+    }
+    else
+    {
+        <p class="lead">No hay ordenes de trabajo terminadas!</p>
+    }
+</div>
+
+
+@section Scripts
+    {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            var table = $("#tablaTick").DataTable({
+                "order": [[1, "desc"]],
+                responsive: true,
+                pageLength: 10,
+                destroy: true,
+                dom: 'Bfrtip',
+                buttons: [
+                    'excel'
+                ],
+                ajax: {
+                    url: "/Admin/InternalWO/LoadOrderDes",
+                    type: "GET",
+                    datatype: "json",
+                },
+                "columns": [
+                    { "data": "usage.rutCliente" },
+                    { "data": "usage.nombreCliente" },
+                    {
+                        "data": "usage.fechaInicio",
+                        render: function (d) {
+                            return moment(d).format("YYYY-MM-DD");
+                        }
+                    },
+                    {
+                        "data": "usage.fechaTermino",
+                        render: function (d) {
+                            return moment(d).format("YYYY-MM-DD");
+                        }
+                    },
+                    { "data": "usage.observacion" },
+                    {
+                        "mRender": function (data, type, row) {
+
+                            var linkDetail = '@Html.ActionLink("", "Details", new {id= -1 },new { @class = "btn btn-sm btn-outline-success far fa-file-alt", data_toggle="tooltip", title="Ver Detalles"})';
+                            linkDetail = linkDetail.replace("-1", row.usage.id);
+
+                            var linkDel = '@Html.ActionLink("", "Eliminar", new {id= -1 }, new { @class = "btn btn-sm btn-outline-danger fas fa-trash", data_toggle="tooltip", title="Eliminar"})';
+                            linkDel = linkDel.replace("-1", row.usage.id);
+
+                            return linkDetail + ' ' + linkDel;
+                        }
+                    }
+                ],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Resultado",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+                    "infoFiltered": "(Filtrado de _MAX_ total Resultado)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Resultado",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+            $("div.dt-buttons button").removeClass('dt-button');
+            $("div.dt-buttons button").removeClass('buttons-excel');
+            $("div.dt-buttons button").removeClass('buttons-html5');
+
+            $("div.dt-buttons button").addClass('btn btn-outline-success col-sm-12 col-md-12 col-lg-12');
+            $("div.dt-buttons button").append('<i class="fas fa-file-excel"></i>');
+            $("div.dt-buttons button span").remove();
+        });
+    </script>
+}

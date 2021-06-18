@@ -1,0 +1,179 @@
+﻿@model SoporteDteCore.Models.ViewModels.TicketViewModel
+@{
+    bool validador = true;
+    ViewData["Title"] = "Editar Ticket";
+}
+<div class="container">
+
+    <h3 class="text-info">Editar Ticket</h3>
+    @if (ViewData["mensaje"] != null)
+    {
+        <div class="alert-success">@ViewData["mensaje"]</div>
+    }
+    <hr />
+    <form asp-action="Edit">
+        <input hidden asp-for="Tickets.Id" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row">
+            <div class="form-group col-lg-4">
+                <label>Rut Cliente</label>
+                <input asp-for="Tickets.RutCliente" class="form-control" readonly />
+            </div>
+            <div class="form-group col-lg-4">
+                <label>Razón Social</label>
+                <input asp-for="Tickets.RazonSocial" class="form-control" readonly />
+            </div>
+            <div class="form-group col-lg-4">
+                <label>Tipo de estación de trabajo</label>
+                <select asp-for="Tickets.TipoEstacion" required class="form-control">
+                    <option value="">Seleccione una opcion</option>
+                    <option value="Servidor">Servidor</option>
+                    <option value="Estacion de Trabajo">Estacion de Trabajo</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-lg-4">
+                <label asp-for="Tickets.NombreContacto"></label>
+                <input asp-for="Tickets.NombreContacto" class="form-control" readonly />
+            </div>
+            <div class="form-group col-lg-4">
+                <label asp-for="Tickets.TelefonoContacto"></label>
+                <input asp-for="Tickets.TelefonoContacto" class="form-control" readonly />
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-lg-4">
+                <label asp-for="Tickets.NombreTecnico"></label>
+                @if (Model.CurrentUser == "Mauricio Olivares" || Model.CurrentUser == "Jonathan Salinas")
+                {
+                    <select asp-for="Tickets.NombreTecnico" asp-items="ViewBag.Tecnicos" required class="form-control">
+                        <option value="">-- Seleccione un tecnico --</option>
+                    </select>
+                }
+                else if (Model.Tickets.NombreTecnico == Model.CurrentUser)
+                {
+                    <input asp-for="Tickets.NombreTecnico" value="@Model.Tickets.NombreTecnico" class="form-control" readonly />
+                }
+                else if (Model.Tickets.NombreTecnico == Model.Tickets.NombreTecnico)
+                {
+                    <input asp-for="Tickets.NombreTecnico" value="@Model.Tickets.NombreTecnico" class="form-control" readonly />
+                }
+                else if (Model.Tickets.NombreTecnico != Model.CurrentUser)
+                {
+                    validador = false;
+                    <input asp-for="Tickets.NombreTecnico" value="@Model.Tickets.NombreTecnico" class="form-control" readonly />
+                }
+            </div>
+            <div class="form-group col-lg-4">
+                <label asp-for="Tickets.Estado"></label>
+                <select asp-for="Tickets.Estado" required class="form-control">
+                    <option value="">Seleccione una opcion</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="En llamado">En llamado</option>
+                    <option value="Terminado">Terminado</option>
+                </select>
+            </div> 
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Tickets.Problema" class="control-label"></label>
+            <!--<input asp-for="Tickets.Problema" class="form-control" />-->
+            <select asp-for="Tickets.Problema" required asp-items="@ViewBag.Problemas" class="form-control">
+                <option value="">Seleccionar un problema</option>
+            </select>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-6">
+                <h4 class="text-info">Detalle del Problema</h4>
+            </div>
+            <div class="col-sm-12 col-md-12 col-lg-6 text-right">
+                <button type="button" id="btnAgregaLineaDet" class="btn btn-outline-info btn-sm" onclick="agregarLineaDet()"
+                        data-toggle="tooltip" data-placement="top" title="Agregar Linea de Detalle">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-responsive-sm" id="tablaDetalle" width="100%">
+                <thead>
+                    <tr>
+                        <th>Detalle</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.DetallesTicket.Count; i++)
+                    {
+                        <tr>
+                            <td class="col-sm-12 col-lg-8">
+                                <textarea asp-for="DetallesTicket[i].Detalle" class="form-control" readonly></textarea>
+                            </td>
+
+                            <td class="col-sm-12 col-lg-1">
+                                <button type="button" id="btnEliminaLineaDet" class="btn btn-outline-danger" onclick="eliminarLineaDet(this);"
+                                        data-toggle="tooltip" data-placement="top" title="Quitar Linea de Detalle">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="text-center">
+            @if (validador)
+            {
+                <input type="submit" value="Actualizar" class="btn btn-outline-info col-sm-12 col-md-12 col-lg-2" />
+            }
+
+            <a asp-action="Index" class="btn btn-outline-dark col-sm-12 col-md-12 col-lg-2">Volver al menú Tickets</a>
+        </div>
+    </form>
+</div>
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        if (@Model.DetallesTicket.Count== 0)
+        {
+            @Model.DetallesTicket.Count ==1;
+        }
+
+        var counter = @Model.DetallesTicket.Count;
+
+        function agregarLineaDet() {
+
+            var tabla = document.getElementById("tablaDetalle");
+            var i = document.getElementsByName("DetallesTicket[" + (counter - 1) + "].Detalle").length + counter;
+            var row1 = tabla.insertRow(i);
+            var cell1 = row1.insertCell(0);
+            var cell8 = row1.insertCell(1)
+
+            cell1.innerHTML = "<textarea asp-for='DetallesTicket[" + counter + "].Detalle' class='form-control' name='DetallesTicket[" + counter + "].Detalle' id='DetallesTicket[" + counter + "].Detalle' rows='4' cols='50'></textarea> ";
+            cell8.innerHTML = '<button type="button" id="btnEliminaLineaDet" class="btn btn-outline-danger" onclick="eliminarLineaDet(this);"><i class="fas fa-minus"></i></button>';
+            counter++;
+        }
+
+        function eliminarLineaDet(boton) {
+            var tabla = document.getElementById("tablaDetalle");
+            var filas = tabla.rows.length;
+
+            if (filas > 2) {
+                var indice = boton.parentNode.parentNode.rowIndex;
+                tabla.deleteRow(-1);
+                counter--;
+            }
+        }
+    </script>
+
+    @if (ViewData["mensaje"] != null)
+    {
+        <script>
+            Swal.fire("¡Exito!", '@ViewData["mensaje"]', "success");
+        </script>
+    }
+}

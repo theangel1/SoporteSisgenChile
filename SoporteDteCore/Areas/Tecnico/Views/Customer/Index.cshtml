@@ -1,0 +1,56 @@
+﻿
+@{
+    ViewData["Title"] = "Consultar ID";
+}
+
+<h3 class="text-info">@ViewData["Title"]</h3>
+
+<div class="container">
+    <div class="row">
+        <form method="post" asp-action="Index">
+            <label>Ingresar Rut</label>
+            <input type="text" placeholder="Ej: 76161082-1" oninput="checkRut(this)" class="form-control" name="rut" id="rut" />
+            <hr />
+            <button type="submit" class="btn btn-outline-info" id="query" name="query">Consultar</button>
+
+        </form>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        @if (ViewData["response"] != null)
+        {
+            <div class="alert alert-success" role="alert">
+                @ViewData["response"]
+            </div>
+        }
+
+        @if (ViewData["error"] != null)
+        {
+            <div class="alert alert-warning" role="alert">
+                @ViewData["error"]
+            </div>
+        }
+    </div>
+</div>
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        
+        $("#query").click(function () {
+            
+            if ($('#rut').val() == '') {
+                Swal.fire("Error", "Debes ingresar un Rut!", "error");
+                return false;
+            }
+
+        });
+          
+
+    </script>
+
+
+
+}
+

@@ -1,0 +1,117 @@
+﻿@model IEnumerable<SoporteDteCore.Models.InternalWorkOrder>
+@{
+    ViewData["Title"] = "Index";
+}
+<div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-6">
+        <h3 class="text-info">Ordenes de trabajo internas</h3>
+    </div>
+    <div class="col-sm-12 col-md-12 col-lg-6 text-right">
+        <a asp-action="Create" class="btn btn-outline-info col-sm-12 col-md-6 col-lg-4 col-xl-4">Crear Nueva orden</a>
+        <a asp-action="Desactivados" class="btn btn-outline-dark col-sm-12 col-md-6 col-lg-4 col-xl-4">Ordenes terminadas</a>
+    </div>
+</div>
+<hr />
+@if (Model.Where(i => i.IsValid == true).Count() > 0)
+{
+    <div class="table-responsive">
+        <table id="tablaTick" class="table" style="width:100%;">
+            <thead>
+                <tr>
+                    <th width="10%" style="color:red">@Html.DisplayNameFor(model => model.RutCliente)</th>
+                    <th width="20%">@Html.DisplayNameFor(model => model.NombreCliente)</th>
+                    <th width="10%">@Html.DisplayNameFor(model => model.FechaInicio)</th>
+                    <th width="10%">@Html.DisplayNameFor(model => model.FechaTermino)</th>
+                    <th width="35%">@Html.DisplayNameFor(model => model.Observacion)</th>
+                    <th width="15%">Acción</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+
+        </table>
+    </div>
+}
+else
+{
+    <p class="lead">No hay ordenes de trabajo pendientes!</p>
+}
+
+@section Scripts
+    {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            $("#tablaTick").DataTable({
+                "order": [[1, "desc"]],
+                responsive: true,
+                pageLength: 5,
+                destroy: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'excel'
+                ],
+                ajax: {
+                    url: "/Admin/InternalWO/LoadOrder",
+                    type: "GET",
+                    datatype: "json",
+                },
+                "columns": [
+                    { "data": "usage.rutCliente" },
+                    { "data": "usage.nombreCliente" },
+                    {
+                        "data": "usage.fechaInicio",
+                        render: function (d) {
+                            return moment(d).format("YYYY-MM-DD");
+                        }
+                    },
+                    {
+                        "data": "usage.fechaTermino",
+                        render: function (d) {
+                            return moment(d).format("YYYY-MM-DD");
+                        }
+                    },
+                    { "data": "usage.observacion" },
+                    {
+                        "mRender": function (data, type, row) {
+                            var linkEdit = '@Html.ActionLink("", "Edit", new {id= -1 }, new { @class = "btn btn-sm btn-outline-info far fa-edit", data_toggle="tooltip", title="Editar Orden"})';
+                            linkEdit = linkEdit.replace("-1", row.usage.id);
+
+                            var linkDetail = '@Html.ActionLink("", "Details", new {id= -1 },new { @class = "btn btn-sm btn-outline-dark far fa-file-alt", data_toggle="tooltip", title="Ver Detalles" })';
+                            linkDetail = linkDetail.replace("-1", row.usage.id);
+
+                            var linkDes = '@Html.ActionLink("", "Delete", new {id= -1 }, new { @class = "btn btn-sm btn-outline-warning fas fa-times", data_toggle="tooltip", title="Borrar orden"})';
+                            linkDes = linkDes.replace("-1", row.usage.id);
+
+                            var linkPDF = '@Html.ActionLink("", "IWPDF", new {id= -1 }, new { @class = "btn btn-sm btn-outline-danger far fa-file-pdf", @target = "_blank", data_toggle="tooltip", title="Ver PDF"})';
+                            linkPDF = linkPDF.replace("-1", row.usage.id);
+
+                            return linkEdit + linkDetail + linkDes + linkPDF;
+                        }
+                    }
+                ],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Resultado",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+                    "infoFiltered": "(Filtrado de _MAX_ total Resultado)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Resultado",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+            orderDatatables();
+        });
+    </script>
+}

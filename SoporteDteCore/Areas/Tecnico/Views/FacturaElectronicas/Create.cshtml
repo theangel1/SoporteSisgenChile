@@ -1,0 +1,60 @@
+﻿@model SoporteDteCore.Models.FacturaElectronica
+
+@{
+    ViewData["Title"] = "Crear Estado";
+}
+<h3 class="text-primary">Crear Estado</h3>
+
+
+<form asp-action="Create" onsubmit="btnSubmit.disabled = true; return true;">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="form-group col-lg-4">
+            <label asp-for="RutCliente" class="control-label"></label>
+            <input asp-for="RutCliente" class="form-control" />
+            <span asp-validation-for="RutCliente" class="text-danger"></span>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="form-group col-lg-8">
+            <label asp-for="RazonSocial" class="control-label"></label>
+            <input asp-for="RazonSocial" class="form-control" />
+            <span asp-validation-for="RazonSocial" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-lg-4">
+            <label asp-for="Telefono" class="control-label"></label>
+            <input asp-for="Telefono" class="form-control" />
+            <span asp-validation-for="Telefono" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-lg-4">
+            <label asp-for="Email" class="control-label"></label>
+            <input asp-for="Email" class="form-control" type="email" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-lg-4">
+            <label asp-for="Estado" class="control-label"></label>
+            <select asp-for="Estado" class="form-control">
+                <option value="@Estado.Solicitado">Solicitado</option>
+            </select>
+            <span asp-validation-for="Estado" class="text-danger"></span>
+        </div>
+
+
+
+
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Crear" class="btn btn-outline-primary col-sm-12 col-md-12 col-lg-2" id="btnSubmit" />
+        <a asp-action="Index" class="btn btn-outline-dark col-sm-12 col-md-12 col-lg-2">Volver a la lista</a>
+    </div>
+</form>

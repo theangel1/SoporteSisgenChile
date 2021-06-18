@@ -1,0 +1,213 @@
+﻿@model SoporteDteCore.Models.ViewModels.WorkOrderViewModel
+@using SoporteDteCore.MisExtensiones
+@{
+    ViewData["Title"] = "Crear OT";
+}
+<h3 class="text-info">Crear Orden de Trabajo</h3>
+<hr />
+<form enctype="multipart/form-data" id="formdev" asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="form-group col-lg-4">
+            <label asp-for="Empresa.RutEmpresa" class="control-label"></label>
+            <button onclick="GetFichaCliente(GetRut());" type="button" class="btn btn-outline-primary btn-sm"><i class="fas fa-user-tag"></i>Ver Ficha</button>
+            <input asp-for="Empresa.RutEmpresa" id="WorkOrder_RutEmpresa" class="form-control" maxlength="10" placeholder="76161082-1" />
+            <span asp-validation-for="Empresa.RutEmpresa" class="text-danger"></span>
+            <input id="idEmpresa" type="number" hidden />
+        </div>
+        <div class="form-group col-lg-4">
+            <label asp-for="Empresa.RazonSocial" class="control-label"></label>
+            <input asp-for="Empresa.RazonSocial" id="WorkOrder_NombreEmpresa" class="form-control" />
+            <span asp-validation-for="Empresa.RazonSocial" class="text-danger"></span>
+        </div>
+        @*CORREO CLIENTE *@
+        <div class="form-group col-lg-4">
+            <label asp-for="WorkOrder.CorreoElectronico" class="control-label"></label>
+            <input asp-for="WorkOrder.CorreoElectronico" class="form-control" id="WorkOrder_CorreoElectronico" />
+            <span asp-validation-for="WorkOrder.CorreoElectronico" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-lg-4">
+            <label asp-for="WorkOrder.HoraLlegada" class="control-label"></label>
+            <input asp-for="WorkOrder.HoraLlegada" id="WorkOrder_HoraLlegada" class="form-control" />
+            <span asp-validation-for="WorkOrder.HoraLlegada" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-lg-4">
+            <label asp-for="WorkOrder.HoraSalida" class="control-label"></label>
+            <input asp-for="WorkOrder.HoraSalida" id="WorkOrder_HoraSalida" class="form-control" />
+            <span asp-validation-for="WorkOrder.HoraSalida" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-lg-4">
+            <label asp-for="WorkOrder.MotivoVisita" class="control-label"></label>
+            <input asp-for="WorkOrder.MotivoVisita" id="WorkOrder_MotivoVisita" class="form-control" />
+            <span asp-validation-for="WorkOrder.MotivoVisita" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="form-group col-lg-4">
+            <div class="form-group">
+                <label class="control-label">Encargado(a)</label>
+                <select id="WorkOrder_Derivado" asp-for="WorkOrder.Derivado" class="form-control required">
+                    <option selected value="maria.ortega@sisgenchile.cl">Maria Ortega</option>
+                </select>
+                <span asp-validation-for="WorkOrder.Derivado" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group col-lg-4">
+            <label asp-for="WorkOrder.NombrePersonaRecibe" class="control-label"></label>
+            <input asp-for="WorkOrder.NombrePersonaRecibe" id="WorkOrder_NombrePersonaRecibe" class="form-control" />
+            <span asp-validation-for="WorkOrder.NombrePersonaRecibe" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-lg-4">
+
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="WorkOrder.TrabajoRealizado" class="control-label"></label>
+        <textarea asp-for="WorkOrder.TrabajoRealizado" id="WorkOrder_TrabajoRealizado" class="form-control"></textarea> 
+        <span asp-validation-for="WorkOrder.TrabajoRealizado" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="WorkOrder.Observaciones" class="control-label"></label>
+        <textarea asp-for="WorkOrder.Observaciones" id="WorkOrder_Observaciones" class="form-control"></textarea>
+        <span asp-validation-for="WorkOrder.Observaciones" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <canvas id="canvas" style="position: relative; margin: 0; padding: 0; border: 1px solid #0094ff;"></canvas>
+        <h6 class="text-info">Firme arriba</h6>
+        <button type="button" class="btn btn-outline-info" id="clear">Clear</button>
+    </div>
+
+    <div class="form-group">
+        <input type="button" value="Guardar" class="btn btn-outline-info col-sm-12 col-md-12 col-lg-2" id="save" />
+        <a asp-action="Index" class="btn btn-outline-dark col-sm-12 col-md-12 col-lg-2">Volver a la lista</a>
+    </div>
+</form>
+<partial name="_ModalCliente" />
+@Html.AntiForgeryToken()
+
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @if (TempData["saveError"] != null)
+    {
+        <script>
+            Swal.fire('Soporte Sisgen Chile', '@TempData["saveError"]', 'error');
+        </script>
+    }
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+    <script>
+
+        var canvas = document.querySelector("canvas");
+        var signaturePad = new SignaturePad(canvas);
+        var saveButton = document.getElementById('save');
+        var cancelButton = document.getElementById('clear');
+
+        // Usa el botón de grabado
+        saveButton.addEventListener('click', function (event) {
+            var horaLlegada = document.getElementById("WorkOrder_HoraLlegada");
+
+            var horaSalida = document.getElementById("WorkOrder_HoraSalida");
+
+            var motivoVisita = document.getElementById("WorkOrder_MotivoVisita");
+
+            var observaciones = document.getElementById("WorkOrder_Observaciones");
+
+            var e = document.getElementById("WorkOrder_Derivado");
+
+            var derivado = e.options[e.selectedIndex];
+
+            var nombrePersonaRecibe = document.getElementById("WorkOrder_NombrePersonaRecibe");
+
+            var correoElectronico = document.getElementById("WorkOrder_CorreoElectronico"); //correo de los cliente
+
+            var trabajoRealizado = document.getElementById("WorkOrder_TrabajoRealizado");
+
+            var image = signaturePad.toDataURL("image/png").replace("image/png", "image/octet-stream");  // here is the most important part because if you dont replace you will get a DOM 18 exception.
+
+            var idEmpresa = $("#idEmpresa").val();
+
+            var dataToSend = {
+                HoraLlegada: horaLlegada.value,
+                HoraSalida: horaSalida.value,
+                MotivoVisita: motivoVisita.value,
+                Observaciones: observaciones.value,
+                Derivado: derivado.value,
+                NombrePersonaRecibe: nombrePersonaRecibe.value,
+                CorreoElectronico: correoElectronico.value, //correo de los cliente
+                NombreImagenFirma: image,
+                TrabajoRealizado: trabajoRealizado.value,
+                EmpresaId: idEmpresa
+            };
+            //console.log(dataToSend);
+
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                data: dataToSend,
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("RequestVerificationToken",
+                        $('input:hidden[name="__RequestVerificationToken"]').val());
+                },
+                success: function () {
+                    Swal.fire({
+                        position: 'center',
+                        title: "Orden de trabajo creada correctamente!",
+                        type: "success",
+                        showConfirmButton: false,
+                        timer: 1250
+                    }).then(function () {
+                        window.location = "@Url.Action("Index", "WorkOrders")";
+                    });
+                },
+                error: function () {
+                    Swal.fire({
+                        position: 'center',
+                        title: "ERROR!",
+                        text: "Favor de verificar los campos",
+                        type: "error",
+                        showConfirmButton: false,
+                        timer: 1250
+                    });
+                }
+            });
+        });
+
+        // Limpia la firma
+        cancelButton.addEventListener('click', function (event) {
+            signaturePad.clear();
+        });
+
+        // Returns true if canvas is empty, otherwise returns false
+        signaturePad.isEmpty();
+
+        // Unbinds all event handlers
+        signaturePad.off();
+
+        // Rebinds all event handlers
+        signaturePad.on();
+
+        function vaciaCajas() {
+            $("#idEmpresa").val("");
+            $("#WorkOrder_RutEmpresa").val("");
+            $("#WorkOrder_NombreEmpresa").val("");
+            $("#WorkOrder_CorreoElectronico").val("");
+        }
+
+        
+        function GetRut() {
+            return $("#WorkOrder_RutEmpresa").val();
+        }
+        
+    </script>
+}

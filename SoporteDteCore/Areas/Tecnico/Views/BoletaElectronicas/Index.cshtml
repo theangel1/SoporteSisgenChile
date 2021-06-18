@@ -1,0 +1,92 @@
+﻿@{
+    ViewData["Title"] = "Control de Boletas";
+}
+<div class="row">
+    <div class="col-lg-6">
+        <h3 class="text-info">Control de Boletas</h3>
+    </div>
+    <div class="col-lg-6 text-right">
+        <a asp-action="Create" class="btn btn-outline-info" 
+           data-toggle="tooltip" data-placement="top" title="Crear Nueva Solicitud">
+            <i class="fas fa-plus"></i>
+        </a>
+    </div>
+</div>
+<hr />
+<div class="table-responsive">
+    <table id="example" class="table table-hover" width="100%">
+        <thead>
+            <tr>
+                <th>Rut Cliente</th>
+                <th>Razon Social</th>
+                <th>Estado</th>
+                <th>Fecha Ingreso</th>
+                <th>Observaciones</th>
+                <th>Accion</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            $("#example").DataTable({
+                pageLength: 10,
+                destroy: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'excel'
+                ],
+                ajax: {
+                    url: "/Tecnico/BoletaElectronicas/LoadJson",
+                    type: "GET",
+                    datatype: "json",
+
+                },
+                "columns": [
+                    { "data": "usage.rutCliente" },
+                    { "data": "usage.razonSocial" },
+                    { "data": "estado" },
+                    {
+                        "data": "usage.fechaInicio",
+                        "mRender": function (data, type, row) {
+                            return moment(data).format('YYYY-MM-DD h:mm:ss a');
+                        }
+                    },
+                    { "data": "usage.observacion" },
+                    {
+                        "mRender": function (data, type, row) {
+                            var linkEdit = '<a href="BoletaElectronicas/Edit/' + row.usage.id + '" class="btn btn-sm btn-outline-info "><i class="fas fa-edit"></i><a/>';
+                            var linkDetail = '<a href="BoletaElectronicas/Details/' + row.usage.id + '" class="btn btn-sm btn-outline-dark btn-sm"><i class="far fa-file-alt"></i><a/>';
+                            return linkEdit + ' ' + linkDetail;
+                        }
+                    }
+                ],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Resultados",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 resultados",
+                    "infoFiltered": "(Filtrado de _MAX_ total Resultados)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Resultados",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+            orderDatatables();
+        });
+    </script>
+}

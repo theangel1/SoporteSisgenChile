@@ -1,0 +1,81 @@
+﻿@model IEnumerable<SoporteDteCore.Models.Empresa>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-6">
+        <h3 class="text-primary">Ficha de Clientes Sisgen</h3>
+    </div>
+  
+</div>
+<hr />
+<div class="table-responsive-sm">
+    <table id="tablEmpresas" class="table table-hover table-striped" width="100%">
+        <thead>
+            <tr>
+                <th width="15%">
+                    @Html.DisplayNameFor(model => model.RutEmpresa)
+                </th>
+                <th width="35%">
+                    @Html.DisplayNameFor(model => model.RazonSocial)
+                </th>
+                <th width="35%">
+                    Estado Bloqueo
+                </th>
+                <th>
+                    Opciones
+                </th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#tablEmpresas").DataTable({
+                pageLength: 15,
+                destroy: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'excel'
+                ],
+                ajax: {
+                    url: '/Admin/Empresas/getEmpresas',
+                    type: 'GET',
+                    dataType: 'json'
+                },
+                "columns": [
+                    { "data": "rutEmpresa" },
+                    { "data": "razonSocial" },                 
+                    {
+                        "mRender": function (data, type, row) {
+                            if (row.isBlocked) {
+                                return '<label style="color: red">Cliente actualmente se encuentra bloqueado por nuestro sistema.</label>';
+                            }
+                            else {
+                                return ' <label style="color:forestgreen">Cliente se encuentra usando los servicios de forma óptima.</label>';
+                            }
+                        }
+                    },
+
+
+                    {
+                        "mRender": function (data, type, row) {
+                            var btnEdit = '<a href="Empresas/Edit/' + row.id + '" class="btn btn-outline-primary btn-sm">Ver y actualizar estado de servicios<a/>';
+                            var btnDetails = '<a href="Empresas/Details/' + row.id + '" class="btn btn-outline-secondary btn-sm">Detalles<a/>';
+                            var btnDelete = '<a href="Empresas/Delete/' + row.id + '" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash-alt"></i><a/>';
+
+                            return btnEdit+ ' ' +btnDetails;
+                        }
+                    },
+                ],
+                
+            });
+            orderDatatables();
+        });
+    </script>
+}

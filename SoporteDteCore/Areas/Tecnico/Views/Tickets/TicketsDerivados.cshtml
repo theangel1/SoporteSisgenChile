@@ -1,0 +1,45 @@
+﻿@model SoporteDteCore.Models.ViewModels.TicketViewModel
+@{
+    ViewData["Title"] = "Tickets Derivados";
+}
+
+<h3 class="text-info">@ViewData["Title"]</h3>
+<br />
+
+<div class="container">
+    <table id="tbTickets" class="table table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Tickets.Id)</th>
+                <th>@Html.DisplayNameFor(model => model.Tickets.RazonSocial)</th>
+                <th>@Html.DisplayNameFor(model => model.Tickets.FechaCreacion)</th>
+                <th>@Html.DisplayNameFor(model => model.Tickets.NombreTecnico)</th>
+                <th>@Html.DisplayNameFor(model => model.Tickets.Problema)</th>
+                <th>@Html.DisplayNameFor(model => model.Tickets.Estado)</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ListaTickets)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                    <td>@Html.DisplayFor(modelItem => item.RazonSocial)</td>
+                    <td>@Html.DisplayFor(modelItem => item.FechaCreacion)</td>
+                    <td>@Html.DisplayFor(modelItem => item.NombreTecnico)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Problema)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Estado)</td>
+                    <td>
+                        <div class="row">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm border-dark btn-primary"><i class="far fa-edit"></i></a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm border-dark btn-success"><i class="far fa-file-alt"></i></a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm border-dark btn-danger"><i class="fas fa-lock"></i></a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+

@@ -1,0 +1,238 @@
+﻿@model SoporteDteCore.Models.ViewModels.TicketViewModel
+@{
+    ViewData["Title"] = "Crear Ticket";
+}
+
+<div class="container">
+
+    <h3 class="text-info">@ViewData["Title"]</h3>
+
+    <form asp-action="Create" onsubmit="btnSubmit.disabled = true; return true">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row">
+            <div class="form-group col-lg-4">
+                <label>Rut Cliente</label>
+                <input asp-for="Tickets.RutCliente" id="rutCli" maxlength="10" class="form-control" placeholder="76161082-1" />
+                <span asp-validation-for="Tickets.RutCliente" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group  col-lg-4">
+
+                <button onclick="GetFichaCliente(GetRut());" type="button" class="btn btn-outline-primary btn-sm"><i class="fas fa-user-tag"></i>Ver Ficha</button>
+                <a target="_blank" asp-action="Create" asp-controller="Empresas" asp-area="Admin" class="btn btn-outline-dark btn-sm"><i class="fas fa-user-tag"></i>Crear cliente</a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-lg-4">
+                <label>Razón Social</label>
+                <input asp-for="Tickets.RazonSocial" id="razonSocial" class="form-control" />
+                <span asp-validation-for="Tickets.RazonSocial" class="text-danger"></span>
+                <a id="linkHistorial" target="_blank" style="display:none" href="#" class="btn btn-success btn-sm">Link al historial</a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-lg-4">
+                <label>Problema</label>
+                <select asp-for="Tickets.Problema" class="form-control">
+                    <option value="En espera">-- Seleccione un Problema --</option>
+                    <option value="CARGA DE FOLIOS">CARGA DE FOLIOS</option>
+                    <option value="FIRMA ELECTRÓNICA">FIRMA ELECTRÓNICA</option>
+                    <option value="IMPRESORA">IMPRESORA</option>
+                    <option value="BOLETA ELECTRONICA">BOLETA ELECTRONICA</option>
+                    <option value="DOCUMENTOS SIN PUBLICAR">DOCUMENTOS SIN PUBLICAR</option>
+                    <option value="SISTEMA SISGEN">SISTEMA SISGEN</option>
+                    <option value="LLAMADA CONSULTA">LLAMADA CONSULTA</option>
+                </select>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="form-group col-lg-4">
+                <label>Prioridad</label>
+                <select asp-for="Tickets.Prioridad" class="form-control" required >                    
+                    <option value="NORMAL" selected>NORMAL</option>
+                    <option value="URGENTE" style="color:red">URGENTE</option>
+                </select>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-lg-4">
+                <label>Nombre contacto</label>
+                <input asp-for="Tickets.NombreContacto" class="form-control" required />
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-lg-4">
+                <label>Teléfono contacto</label>
+                <input asp-for="Tickets.TelefonoContacto" class="form-control" required />
+
+            </div>
+        </div>
+        <table class="table" id="tablaDetalle">
+            <thead>
+                <tr>
+                    <th>Observación</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <textarea required asp-for="DetallesTicket[0].Detalle" class="form-control" value="Ingresar Detalle" rows="3" cols="50" placeholder="Breve descripción del problema"></textarea>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="text-center">
+            <button type="submit" onblur="return ValidaTicket();" id="btnSubmit" class="btn btn-outline-primary btn-lg">Crear Ticket <i class="far fa-plus-square"></i></button>
+
+            <a asp-action="Index" class="btn btn-outline-warning " onclick="return confirm('¿Desea Volver a la Lista de Tickets?')">Volver</a>
+        </div>
+    </form>
+
+
+    <partial name="_ModalCliente" />
+
+</div>
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+            $('#divDerivar').hide();
+        });
+
+
+
+        function ShowMenu() {
+            $('#divDerivar').toggle('fast', 'linear');
+        }
+
+        // Carga los datos de la empresa al ingresar rut empresa
+        //Deberia ser una funcion global
+        $("#rutCli").change(function () {
+            var rutCliente = $("#rutCli").val();
+
+            $.ajax({
+                type: 'GET',
+                url: '/Tecnico/WorkOrders/DatosEmp',
+                data: { 'rut': rutCliente },
+                dataType: 'json',
+                success: function (response) {
+                    if (response.datos[0] == null) {
+                        $("#rutCli").val("");
+
+                        Swal.fire({
+                            position: 'center',
+                            title: 'Error!',
+                            text: 'No existen datos de esta empresa',
+                            type: 'error',
+                            showConfirmButton: false,
+                            timer: 1750
+                        });
+                    }
+                    else if (response.datos[0].isBlocked) {
+                        Swal.fire({
+                            title: 'Sisgen Chile',
+                            text: 'Cliente se encuentra bloqueado.',
+                            type: 'error',
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: '¡Entendido!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.reload();
+                            }
+                            else
+                                window.location.reload();
+                        });
+                    }
+
+                    // Llena los valores del campo razon social
+                    $('#razonSocial').val(response.datos[0].razonSocial);
+
+                    $("#linkHistorial").attr("href", "HistorialCliente/?rut=" + GetRut());
+
+                    $("#linkHistorial").show();
+
+
+                }
+
+            });
+        });
+
+        // Carga los datos de la empresa al ingresar razon social
+        $("#razonSocial").change(function () {
+            var razonSocial = $("#razonSocial").val();
+
+            $.ajax({
+                type: 'GET',
+                url: '/Tecnico/WorkOrders/DatosNomEmp',
+                data: { 'nomEmp': razonSocial },
+                dataType: 'json',
+                success: function (response) {
+                    if (response.datos[0] == null) {
+                        $("#razonSocial").val("");
+                        Swal.fire({
+                            position: 'center',
+                            title: 'Error!',
+                            text: 'No existen datos de esta empresa',
+                            type: 'error',
+                            showConfirmButton: false,
+                            timer: 1750
+                        });
+                    }
+                    else if (response.datos[0].isBlocked) {
+                        Swal.fire({
+                            title: 'Sisgen Chile',
+                            text: 'Cliente se encuentra bloqueado.',
+                            type: 'error',
+                            confirmButtonColor: '#3085d6',
+                            confirmButtonText: '¡Entendido!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.reload();
+                            }
+                            else
+                                window.location.reload();
+                        });
+                    }
+
+                    // Llena los valores del campo rut empresa
+                    $('#rutCli').val(response.datos[0].rutEmpresa);
+
+
+
+
+                }
+            });
+        });
+
+        // Autocompletado para nombre y rut de empresa
+        $(document).ready(function () {
+            $("#razonSocial").autocomplete({
+                source: '/Tecnico/WorkOrders/SearchEmpNom'
+            });
+
+            $("#rutCli").autocomplete({
+                source: '/Tecnico/WorkOrders/SearchEmpRut'
+            });
+        });
+
+
+        function GetRut() {
+            return $("#rutCli").val();
+        }
+
+
+
+    </script>
+}

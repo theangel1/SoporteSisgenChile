@@ -1,0 +1,81 @@
+﻿@model SoporteDteCore.Models.ViewModels.VisitaViewModel
+
+@{
+    ViewData["Title"] = "Editar Visita";
+}
+<h4 class="text-info">Editar Visita</h4>
+<hr />
+<form asp-action="Edit">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Visita.Id" />
+
+    <div class="row">
+        <div class="form-group col-lg-4">
+            <label asp-for="Visita.NombreTecnico"></label>
+            <select asp-for="Visita.NombreTecnico" asp-items="@Model.Usuarios" class="form-control required">
+                <option value="">Seleccionar un Usuario</option>
+            </select>
+        </div>
+
+        <div class="form-group col-lg-4">
+            <label asp-for="Visita.RutCliente" class="control-label"></label>
+            <input asp-for="Visita.RutCliente" class="form-control" />
+            <span asp-validation-for="Visita.RutCliente" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-lg-4">
+            <label asp-for="Visita.RazonSocial" class="control-label"></label>
+            <input asp-for="Visita.RazonSocial" class="form-control" />
+            <span asp-validation-for="Visita.RazonSocial" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-lg-4">
+            <label asp-for="Visita.FechaProgramacion" class="control-label"></label>
+            <input asp-for="Visita.FechaProgramacion" class="form-control" />
+            <span asp-validation-for="Visita.FechaProgramacion" class="text-danger"></span>
+        </div>
+        <div class="form-group col-lg-4">
+            <label asp-for="Visita.EstadoActual" class="control-label"></label>
+            <input asp-for="Visita.EstadoActual" class="form-control" />
+            <span asp-validation-for="Visita.EstadoActual" class="text-danger"></span>
+        </div>
+        <div class="form-group col-lg-4">
+            <label asp-for="Visita.EstadoFinal" class="control-label"></label>
+            <input asp-for="Visita.EstadoFinal" class="form-control" />
+            <span asp-validation-for="Visita.EstadoFinal" class="text-danger"></span>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="form-group col-lg-6">
+            <label asp-for="Visita.NumeroContacto" class="control-label"></label>
+            <input asp-for="Visita.NumeroContacto" class="form-control" />
+            <span asp-validation-for="Visita.NumeroContacto" class="text-danger"></span>
+        </div>
+        <div class="form-group col-lg-6">
+            <label asp-for="Visita.NombreContacto" class="control-label"></label>
+            <input asp-for="Visita.NombreContacto" class="form-control" />
+            <span asp-validation-for="Visita.NombreContacto" class="text-danger"></span>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="form-group col-lg-6">
+            <label asp-for="Visita.MotivoVisita" class="control-label"></label>
+            <textarea asp-for="Visita.MotivoVisita" class="form-control" rows="4" cols="50"> </textarea>
+            <span asp-validation-for="Visita.MotivoVisita" class="text-danger"></span>
+        </div>
+        <div class="form-group col-lg-6">
+            <label asp-for="Visita.Observacion" class="control-label"></label>
+            <textarea asp-for="Visita.Observacion" class="form-control" rows="4" cols="50"></textarea>
+            <span asp-validation-for="Visita.Observacion" class="text-danger"></span>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <input type="submit" value="Guardar" class="btn btn-outline-info col-sm-12 col-md-12 col-lg-2" />
+        <a class="btn btn-outline-dark col-sm-12 col-md-12 col-lg-2" asp-action="Index">Volver al listado</a>
+    </div>
+</form>

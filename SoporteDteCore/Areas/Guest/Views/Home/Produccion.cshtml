@@ -1,0 +1,175 @@
+﻿@page
+@{
+    Layout = "/Views/Shared/_LayoutProduccion.cshtml";
+}
+@model IEnumerable<SoporteDteCore.Models.ViewModels.TicketViewModel>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+<style>
+    .mdl-button--raised.mdl-button--colored {
+        background: #fc3;
+        color: black;
+    }
+
+        .mdl-button--raised.mdl-button--colored:hover {
+            background: #fc3;
+            color: black;
+        }
+
+    .mdl-data-table {
+        white-space: normal;
+        font-size: 18px;
+    }
+
+        .mdl-data-table th {
+            color: black;
+        }
+
+        .mdl-data-table td {
+            text-align: center;
+        }
+
+    /*.pagination {
+        padding-left: 970px;
+    }*/
+    div.dataTables_wrapper {
+        width: 100%;
+    }
+
+        div.dataTables_wrapper div.dataTables_paginate {
+            padding-top: 0px;
+            margin-right: 0px;
+            margin-left: 55%;
+        }
+
+    .dataTables_wrapper .dataTables_info {
+        color: white;
+        margin-left: 1%;
+    }
+</style>
+<div class="area">
+    <ul class="circles">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+    <div class="dark-translucent-bg">
+        <div class="row">
+         
+            <div class="col-lg-12 col-xl-12 col-sm-12 col-md-12" id="divAngels">
+                @if (SignInManager.IsSignedIn(User))
+                {
+                <div class="table-responsive">
+                    <table id="tablaTick" class="mdl-data-table" style="width: 98%; margin-left: 15px">
+                        <thead>
+                            <tr>
+                                <th class="text-primary"><font size="5">ID</font></th>
+                                <th class="text-center"><font size="5">Tiempo</font></th>
+                                <th class="text-center"><font size="5">Inicio</font></th>
+                                <th class="text-center"><font size="5">Razón Social</font></th>
+                                <th class="text-center"><font size="5">Técnico</font></th>
+                                <th class="text-center"><font size="5">Problema</font></th>
+                                <th class="text-center"><font size="5">Estado</font></th>
+
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            var table = $("#tablaTick").DataTable({
+                "order": [4, "asc"],
+                responsive: true,
+                pageLength: 10,
+                destroy: true,
+                dom: 'rtip',
+                ajax: {
+                    url: "/Guest/Home/LoadTickets",
+                    type: "GET",
+                    datatype: "json"
+                },
+                "columns": [
+                    {
+                        "data": "id"
+                    },
+                    {
+                        //== Tiempo transcurrido
+                        "data": "fechaCreacion",
+                        render: function (d) {
+                            return moment(d).startOf('hour').fromNow();
+                        }
+                    },
+                    {
+                        "data": "fechaCreacion",
+                        render: function (d) {
+                            return moment(d).format("DD/MM/YY H:mm a");
+                        }
+                    },
+                    { "data": "razonSocial" },
+                    {
+                        //"data": "nombreTecnico"
+                        "mRender": function (data, type, row) {
+                            return '<label style="color:green">' + row.nombreTecnico + '</label>';
+                        }
+                    },
+                    { "data": "problema" },
+                    {
+                        //   "data": "estado"
+                        "mRender": function (data, type, row) {
+                            return '<label style="color:darkorange">' + row.estado + '</label>';
+                        }
+                    },
+                ],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Resultados",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 resultados",
+                    "infoFiltered": "(Filtrado de _MAX_ total Resultados)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Resultados",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+
+            });
+            orderDatatables();
+
+
+            setInterval(function () {
+                $("#divAngels").fadeOut('slow');
+                table.ajax.reload();
+                $("#divAngels").fadeIn('slow');
+            }, 10000);
+
+        });
+    </script>
+}

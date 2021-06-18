@@ -1,0 +1,233 @@
+﻿
+@model SoporteDteCore.Models.Formulario
+@{
+    ViewData["Title"] = "Formulario Certificación electrónica";
+}
+<div class="container card border-info mb-3"  style="width: 50rem;">
+    <div class="text-center">
+        <img src="~/img/Sisgen Logo Baja-negro.png" width="20%" />
+        <h2 class="text-info card-header">@ViewData["Title"]</h2>
+    </div>
+    
+    <h6 class="text-muted text-info h5">Siga las instrucciones y complete el formulario</h6>
+    <hr />
+
+    <form asp-action="Formulario" onsubmit="btnSubmit.disabled = true; return true;">
+        <!-- Datos Empresa -->
+        <h4 class="h4 text-info">Datos Empresa</h4>
+
+        <div class="form-group">
+            <label class="text-muted">Rut Empresa</label>
+            <input required id="rut" asp-for="@Model.RutEmpresa" oninput="checkRut(this)" onblur="valRut('rut')" placeholder="ej: 12345678-9" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label class="text-muted">Razón Social</label>
+            <input required asp-for="@Model.RazonSocial" placeholder="ej: Sisgen Chile Computación LIMITADA" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label class="text-muted">Nombre Fantasía</label>
+            <input required asp-for="@Model.NombreFantasia" placeholder="ej: SISGEN chile" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label class="text-muted">Giro</label>
+            <input required asp-for="@Model.Giro" placeholder="ej: Soluciones informaticas" class="form-control" />
+        </div>
+
+
+        <div class="form-group">
+            <label class="text-muted">Cód. Actividad Económica/Acteco</label>
+            <input type="number" required asp-for="@Model.CodigoActividad" oninput="this.value = Math.abs(this.value)" placeholder="ej: 441236" class="form-control" onKeyPress="if(this.value.length==6) return false;" />
+        </div>
+        <div class="form-group">
+            <label class="text-muted">Correo Empresarial</label>
+            <input required type="email" asp-for="@Model.Correo" placeholder="ej: empresa@gmail.com" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label class="text-muted">Telefono Empresa</label>
+            <input required asp-for="@Model.Telefono" placeholder="ej: +5692345678" class="form-control" />
+        </div>
+        <br />
+
+        <!-- Ubicación -->
+        <div class="form-group">
+            <label class="text-muted">Región</label>
+            <select id="ddlRegion" onchange="CambioRegion()" asp-for="@Model.RegionId" asp-items="@ViewBag.Regiones" class="form-control">
+                <option value="-1" selected disabled>-- Seleccione Región --</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="text-muted">Provincia</label>
+            <select id="ddlProvincia" onchange="CambioProvi()" asp-for="@Model.ProvinciaId" class="form-control">
+                <option value="-1" selected disabled>-- Seleccione Provincia --</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="text-muted">Comuna</label>
+            <select id="ddlComuna" asp-for="@Model.ComunaId" class="form-control">
+                <option value="-1" selected disabled>-- Seleccione Comuna --</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="text-muted">Dirección</label>
+            <input asp-for="@Model.Direccion" class="form-control" placeholder="ej: Avda. Siempre viva 118" />
+        </div>
+        <hr />
+        <!-- Datos Representante -->
+        <h4 class="h4 text-info">Datos Representante legal</h4>
+        <div class="form-group">
+            <label class="text-muted">Rut Representante</label>
+            <input required id="rutRep" asp-for="@Model.RutRep" oninput="checkRut(this)" onblur="valRut('rutRep')" placeholder="ej: 12345678-9" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label class="text-muted">Nombre Representante</label>
+            <input required asp-for="@Model.Nombre" placeholder="ej: Eduardo Osvaldo Cortés Urzua " class="form-control" />
+        </div>
+        <div class="form-group">
+            <label class="text-muted">Dirección</label>
+            <input required asp-for="@Model.DireccionRep" placeholder="ej: Avda. Siempre viva 118" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label class="text-muted" data-toggle="tooltip" title="¿Qué es esto?">N° Serie Carnet <i data-toggle="modal" data-target="#infoModal" class="far fa-question-circle"></i></label>
+            <input required asp-for="@Model.SerieCarnet" placeholder="ej: 100100100" class="form-control" />
+        </div>
+
+
+        <div class="form-group">
+            <label class="text-muted">Nacionalidad</label>
+            <select asp-for="@Model.Nacionalidad" class="form-control">
+                <option selected value="Chileno/a">Chileno/a</option>
+                <option value="Extranjero/a">Extranjero/a</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="text-muted">Fecha expiración cédula identidad</label>
+            <input required asp-for="@Model.FechaExpiracionCarnet" type="date" class="form-control" />
+        </div>
+
+
+        <div class="modal fade" id="infoModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <strong>¿Cual es el numero de serie de mi carnet?</strong>
+                    </div>
+
+                    <div class="modal-body">
+                        <img src="~/img/ejemplo-nroserie.png" class="img-fluid" />
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="text-muted">Celular</label>
+            <input required asp-for="@Model.TelefonoRep" placeholder="ej: +56912345678" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label class="text-muted">Correo Representante</label>
+            <input required type="email" asp-for="@Model.CorreoRep" placeholder="ej: correo@dominio.cl" class="form-control" />
+        </div>
+
+        <div class="text-center">
+            <hr />
+            <button type="submit" class="btn btn-primary btn-xl" id="btnSubmit">Enviar Formulario</button>
+        </div>
+        
+    </form>
+</div>
+
+@section Scripts
+{
+    @if (ViewData["Done"] != null)
+    {
+        <script>
+            Swal.fire("¡Exito!", '@ViewData["Done"]', "success");
+        </script>
+    }
+
+    @if (ViewData["RutEmpresaExistente"] != null)
+    {
+        <script>
+            Swal.fire("¡Alerta!", '@ViewData["RutEmpresaExistente"]', "error");
+        </script>
+    }
+
+    <script>
+
+        // Activa tool tip
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        // Pone el nombre del archivo en el input
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+
+        // En cambio de region
+        function CambioRegion() {
+
+            let regionId = parseInt(document.getElementById("ddlRegion").value);
+            $('#ddlProvincia').empty();
+
+            $.ajax({
+                dataType: 'json',
+                url: "/Guest/Home/GetProvincias",
+                data: { "id": regionId },
+                success: function (response) {
+
+                    console.log(response);
+
+                    // Llena la caja de Provincias
+                    if (response.recordsFiltered > 0) {
+
+                        for (var i = 0; i < response.recordsFiltered; i++) {
+                            var option = $('<option />');
+                            option.attr('value', response.provincias[i].id).text(response.provincias[i].nombre);
+                            $('#ddlProvincia').append(option);
+                        }
+
+                        $('#ddlProvincia').val($("#ddlProvincia option:first").val());
+
+                        CambioProvi();
+                    }
+                }
+            });
+        }
+
+        // En cambio de Provincia
+        function CambioProvi() {
+
+            let provId = parseInt(document.getElementById("ddlProvincia").value);
+            $('#ddlComuna').empty();
+
+            $.ajax({
+                dataType: 'json',
+                url: "/Guest/Home/GetComunas",
+                data: { "id": provId },
+                success: function (response) {
+
+                    console.log(response);
+
+                    // Llena la caja de Provincias
+                    if (response.recordsFiltered > 0) {
+
+                        for (var i = 0; i < response.recordsFiltered; i++) {
+                            var option = $('<option />');
+                            option.attr('value', response.comunas[i].id).text(response.comunas[i].nombre);
+                            $('#ddlComuna').append(option);
+                        }
+
+                        $('#ddlComuna').val($("#ddlComuna option:first").val());
+                    }
+                }
+            });
+        }
+
+    </script>
+
+
+}

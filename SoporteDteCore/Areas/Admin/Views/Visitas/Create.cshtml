@@ -1,0 +1,177 @@
+﻿@model SoporteDteCore.Models.ViewModels.VisitaViewModel
+
+@{
+    ViewData["Title"] = "Crear Visita";
+}
+
+<h4 class="text-info">Crear Visita</h4>
+<hr />
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row">
+        <div class="form-group col-lg-4">
+            <label asp-for="Visita.NombreTecnico"></label>
+            <select asp-for="Visita.NombreTecnico" asp-items="@Model.Usuarios" class="form-control required">
+                <option value="">Seleccionar un Usuario</option>
+            </select>
+        </div>
+
+        <div class="form-group col-lg-4">
+            <label asp-for="Visita.RutCliente" class="control-label"></label>
+            <button onclick="GetFichaCliente(GetRut());" type="button" class="btn btn-outline-primary btn-sm"><i class="fas fa-user-tag"></i>Ver Ficha</button>
+            <input asp-for="Visita.RutCliente" class="form-control" id="rutCli" />
+            <span asp-validation-for="Visita.RutCliente" class="text-danger"></span>
+        </div>
+
+        <div class="form-group col-lg-4">
+            <label asp-for="Visita.RazonSocial" class="control-label"></label>
+            <input asp-for="Visita.RazonSocial" id="razonSocial" class="form-control" />
+            <span asp-validation-for="Visita.RazonSocial" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-lg-4">
+            <label asp-for="Visita.FechaProgramacion" class="control-label"></label>
+            <input asp-for="Visita.FechaProgramacion" class="form-control" />
+            <span asp-validation-for="Visita.FechaProgramacion" class="text-danger"></span>
+        </div>
+        <div class="form-group col-lg-4">
+            <label asp-for="Visita.EstadoActual" class="control-label"></label>
+            <input asp-for="Visita.EstadoActual" class="form-control" />
+            <span asp-validation-for="Visita.EstadoActual" class="text-danger"></span>
+        </div>
+        <div class="form-group col-lg-4">
+            <label asp-for="Visita.EstadoFinal" class="control-label"></label>
+            <input asp-for="Visita.EstadoFinal" class="form-control" />
+            <span asp-validation-for="Visita.EstadoFinal" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-lg-6">
+            <label asp-for="Visita.NumeroContacto" class="control-label"></label>
+            <input asp-for="Visita.NumeroContacto" class="form-control" />
+            <span asp-validation-for="Visita.NumeroContacto" class="text-danger"></span>
+        </div>
+        <div class="form-group col-lg-6">
+            <label asp-for="Visita.NombreContacto" class="control-label"></label>
+            <input asp-for="Visita.NombreContacto" class="form-control" />
+            <span asp-validation-for="Visita.NombreContacto" class="text-danger"></span>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="form-group col-lg-6">
+            <label asp-for="Visita.MotivoVisita" class="control-label"></label>
+            <textarea asp-for="Visita.MotivoVisita" class="form-control" rows="4" cols="50"> </textarea>
+            <span asp-validation-for="Visita.MotivoVisita" class="text-danger"></span>
+        </div>
+        <div class="form-group col-lg-6">
+            <label asp-for="Visita.Observacion" class="control-label"></label>
+            <textarea asp-for="Visita.Observacion" class="form-control" rows="4" cols="50"></textarea>
+            <span asp-validation-for="Visita.Observacion" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Crear" class="btn btn-outline-info col-sm-12 col-md-12 col-lg-2" />
+        <a class="btn btn-outline-dark col-sm-12 col-md-12 col-lg-2" asp-action="Index">Volver a la lista</a>
+    </div>
+</form>
+
+<partial name="_ModalCliente" />
+@section Scripts{
+    <script>
+        function GetRut() {
+            return $("#rutCli").val();
+        }
+
+        $("#rutCli").change(function () {
+            var rutCliente = $("#rutCli").val();
+
+            $.ajax({
+                type: 'GET',
+                url: '/Tecnico/WorkOrders/DatosEmp',
+                data: { 'rut': rutCliente },
+                dataType: 'json',
+                success: function (response) {
+                    if (response.datos[0] == null) {
+                        $("#rutCli").val("");
+                        Swal.fire({
+                            position: 'center',
+                            title: 'Error!',
+                            text: 'No existen datos de esta empresa',
+                            type: 'error',
+                            showConfirmButton: false,
+                            timer: 1000
+                        });
+                    }
+
+                    // Llena los valores del campo razon social
+                    $('#razonSocial').val(response.datos[0].razonSocial);
+
+                    Swal.fire({
+                        position: 'center',
+                        title: 'Exito!',
+                        text: 'Datos cargados correctamente',
+                        type: 'success',
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                }
+
+            });
+        });
+
+        // Carga los datos de la empresa al ingresar razon social
+        $("#razonSocial").change(function () {
+            var razonSocial = $("#razonSocial").val();
+
+            $.ajax({
+                type: 'GET',
+                url: '/Tecnico/WorkOrders/DatosNomEmp',
+                data: { 'nomEmp': razonSocial },
+                dataType: 'json',
+                success: function (response) {
+                    if (response.datos[0] == null) {
+                        $("#razonSocial").val("");
+                        Swal.fire({
+                            position: 'center',
+                            title: 'Error!',
+                            text: 'No existen datos de esta empresa',
+                            type: 'error',
+                            showConfirmButton: false,
+                            timer: 1000
+                        });
+                    }
+
+                    // Llena los valores del campo rut empresa
+                    $('#rutCli').val(response.datos[0].rutEmpresa);
+
+                    Swal.fire({
+                        position: 'center',
+                        title: 'Exito!',
+                        text: 'Datos cargados correctamente',
+                        type: 'success',
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+                }
+            });
+        });
+
+        // Autocompletado para nombre y rut de empresa
+        $(document).ready(function () {
+            $("#razonSocial").autocomplete({
+                source: '/Tecnico/WorkOrders/SearchEmpNom'
+            });
+
+            $("#rutCli").autocomplete({
+                source: '/Tecnico/WorkOrders/SearchEmpRut'
+            });
+        });
+    </script>
+
+}

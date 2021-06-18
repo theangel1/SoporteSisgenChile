@@ -1,0 +1,97 @@
+﻿@{
+    ViewData["Title"] = "Control de Factura Electronica";
+}
+<div class="row">
+    <div class="col-lg-6">
+        <h3 class="text-primary">Control de Factura Electronica</h3>
+    </div>
+    <div class="col-lg-6 text-right">
+        <a asp-action="Create" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Crear nueva solicitud">
+            <i class="fas fa-plus"></i>
+        </a>
+    </div>
+</div>
+<hr />
+<div class="table-responsive">
+    <table id="example" class="table table-striped" width="100%">
+        <thead>
+            <tr>
+                <th width="10%">Rut Cliente</th>
+                <th width="20%">Razón Social</th>
+                <th width="10%">Estado</th>
+                <th width="10%">Fecha de Ingreso</th>
+
+                <th width="10%">Accion</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+@section Scripts{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            $("#example").DataTable({
+                pageLength: 15,
+                destroy: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'excel'
+                ],
+                order: [[3, "desc"]],
+                ajax: {
+                    url: "/Tecnico/FacturaElectronicas/LoadJson",
+                    type: "GET",
+                    datatype: "json",
+
+                },
+                "columns": [
+                    { "data": "usage.rutCliente" },
+                    { "data": "usage.razonSocial" },
+                    { "data": "estado" },
+                    {
+                        "data": "usage.fechaInicio",
+                        "mRender": function (data, type, row) {
+                            return moment(data).format('DD-MM-YYYY');
+                        }
+                    },
+
+                    {
+                        "mRender": function (data, type, row) {
+                            var linkEdit = '@Html.ActionLink("Editar", "Edit", new {id= -1 }, new { @class = "btn btn-sm btn-outline-primary" })';
+                            linkEdit = linkEdit.replace("-1", row.usage.id);
+
+                            var linkDetail = '@Html.ActionLink("Detalles", "Details", new {id= -1 },new { @class = "btn btn-sm btn-outline-success" })';
+                            linkDetail = linkDetail.replace("-1", row.usage.id);
+
+
+                            return linkEdit +' '+ linkDetail;
+                        }
+                    }
+                ],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Resultados",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 resultados",
+                    "infoFiltered": "(Filtrado de _MAX_ total Resultados)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Resultados",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+            orderDatatables();
+        });
+    </script>
+}

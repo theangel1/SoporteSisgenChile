@@ -1,0 +1,58 @@
+﻿@model SoporteDteCore.Models.Ticket
+@{
+    ViewData["Title"] = "Desactivar";
+}
+
+<h3 class="text-danger">Desactivar Ticket</h3>
+
+<div class="container">
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.RutCliente)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.RutCliente)
+        </dd>
+
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RazonSocial)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.RazonSocial)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.FechaCreacion)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FechaCreacion)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Problema)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Problema)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NombreTecnico)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.NombreTecnico)
+        </dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Desactivar" class="btn btn-outline-info col-sm-12 col-md-12 col-lg-3" />
+        <a asp-action="Index" class="btn btn-outline-dark col-sm-12 col-md-12 col-lg-3">Volver a la lista de Tickets</a>
+    </form>
+    <hr />
+
+    <form asp-action="KillTicket" >
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Eliminar" class="btn btn-outline-danger col-sm-12 col-md-12 col-lg-3" onclick="Swal.fire('Exito' ,'Ticket Eliminado!!!', 'success' )" />
+    </form>
+</div>
+

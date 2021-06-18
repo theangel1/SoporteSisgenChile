@@ -1,0 +1,71 @@
+﻿@model SoporteDteCore.Models.WorkOrder
+
+@{
+    ViewData["Title"] = "Editar OT";
+}
+<h3 class="text-info">Editar Orden de Trabajo</h3>
+<hr />
+<form asp-action="Edit">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <div class="row">
+        <div class="form-group col-lg-4">
+            <label asp-for="Empresa.RutEmpresa" class="control-label"></label>
+            <input asp-for="Empresa.RutEmpresa" id="WorkOrder_RutEmpresa" class="form-control" />
+            <span asp-validation-for="Empresa.RutEmpresa" class="text-danger"></span>
+        </div>
+        <div class="form-group col-lg-4">
+            <label asp-for="Empresa.RazonSocial" class="control-label"></label>
+            <input asp-for="Empresa.RazonSocial" id="WorkOrder_NombreEmpresa" class="form-control" />
+            <span asp-validation-for="Empresa.RazonSocial" class="text-danger"></span>
+        </div>
+        <div class="form-group col-lg-4">
+            <label asp-for="HoraLlegada" class="control-label"></label>
+            <input asp-for="HoraLlegada" class="form-control" id="WorkOrder_HoraLlegada" placeholder="Ej: 17:05" />
+            <span asp-validation-for="HoraLlegada" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col-lg-4">
+            <label asp-for="HoraSalida" class="control-label"></label>
+            <input asp-for="HoraSalida" class="form-control" id="WorkOrder_HoraSalida" placeholder="Ej: 08:03" />
+            <span asp-validation-for="HoraSalida" class="text-danger"></span>
+        </div>
+        <div class="form-group col-lg-4">
+            <label asp-for="MotivoVisita" class="control-label"></label>
+            <input asp-for="MotivoVisita" class="form-control" />
+            <span asp-validation-for="MotivoVisita" class="text-danger"></span>
+        </div>
+        <div class="form-group col-lg-4">
+            <label asp-for="TrabajoRealizado" class="control-label"></label>
+            <input asp-for="TrabajoRealizado" class="form-control" />
+            <span asp-validation-for="TrabajoRealizado" class="text-danger"></span>
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label asp-for="Observaciones" class="control-label"></label>
+        <textarea asp-for="Observaciones" class="form-control"></textarea>
+        <span asp-validation-for="Observaciones" class="text-danger"></span>
+    </div>
+    <div class="row">
+        <div class="col-lg-2">
+            <label asp-for="IsActive" class="control-label">Esta activo?</label>
+        </div>
+        <div class="col-lg-1 text-left">
+            <input type="checkbox" asp-for="IsActive" class="form-control" />
+        </div>
+    </div>
+
+    <!--Hidden fields-->
+    <input type="hidden" asp-for="NombreTecnico" />
+    <input type="hidden" asp-for="Derivado" />
+    <input type="hidden" asp-for="NombreImagenFirma" />
+    <input type="hidden" asp-for="NombrePersonaRecibe" />
+    <br />
+    <div class="form-group">
+        <input type="submit" value="Guardar" class="btn btn-outline-info col-sm-12 col-md-12 col-lg-2" />
+        <a asp-action="Index" class="btn btn-outline-dark col-sm-12 col-md-12 col-lg-2">Volver a la lista</a>
+    </div>
+</form>

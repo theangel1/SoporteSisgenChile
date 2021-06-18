@@ -1,0 +1,127 @@
+﻿@model SoporteDteCore.Models.ViewModels.TicketViewModel
+@{
+    ViewData["Title"] = "Detalles";
+}
+
+<div class="container">
+
+    <h3 class="text-primary">Detalles</h3>
+
+    <dl class="dl-horizontal">
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Tickets.RutCliente)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Tickets.RutCliente)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Tickets.RazonSocial)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Tickets.RazonSocial)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Tickets.NombreContacto)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Tickets.NombreContacto)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Tickets.TelefonoContacto)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Tickets.TelefonoContacto)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Tickets.TipoEstacion)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Tickets.TipoEstacion)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Tickets.FechaCreacion)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Tickets.FechaCreacion)
+        </dd>
+
+        @if (Model.Tickets.FechaCierre != DateTime.MinValue)
+        {
+            <dt>
+                @Html.DisplayNameFor(model => model.Tickets.FechaCierre)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Tickets.FechaCierre)
+            </dd>
+        }
+        <dt>
+            @Html.DisplayNameFor(model => model.Tickets.NombreTecnico)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Tickets.NombreTecnico)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Tickets.Problema)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Tickets.Problema)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Tickets.Estado)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Tickets.Estado)
+        </dd>
+
+        @if (Model.Tickets.FechaCierre < DateTime.MinValue)
+        {
+            <dt>
+                @Html.DisplayNameFor(model => model.Tickets.FechaCierre)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Tickets.FechaCierre)
+            </dd>
+        }
+
+    </dl>
+
+    
+        <table class="table table-responsive" width="100%">
+            <tr>
+                
+                <th>Detalle</th>
+                <th>Hora</th>
+            </tr>
+
+            @foreach (var item in Model.DetallesTicket)
+            {
+                <tr>
+                    <td width="80%">@Html.DisplayFor(c => item.Detalle)</td>
+                    <td width="20%">@Html.DisplayFor(c => item.TimeStamp)</td>
+                </tr>
+            }
+        </table>
+  
+    @if (Model.Tickets.IsActive == true)
+    {
+<div class="row">
+    
+    <a asp-action="Index" class="btn btn-outline-dark">Volver a la lista de Tickets</a>
+    
+</div>
+    }
+    <br />
+    
+      
+    </div>
+
+
+    

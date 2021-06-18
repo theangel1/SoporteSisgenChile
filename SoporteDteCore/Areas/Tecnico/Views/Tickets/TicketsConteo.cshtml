@@ -1,0 +1,119 @@
+﻿@model IEnumerable<SoporteDteCore.Models.Ticket>
+@{
+    ViewData["tipoReporte"] = @Context.Request.Query["Type"];
+}
+<!-- Numero de tickets por Tecnico -->
+<h3 class="text-info">Tickets Reporte: @ViewData["tipoReporte"]</h3>
+<hr />
+<div id="tablaConteo" class="table-responsive">
+    <table id="tableCount" class="table table-bordered table-hover" width="100%">
+        <thead>
+            <tr>
+                <th style="width: 34%">NombresTecnico</th>
+                <th style="width: 33%">FechaCreacion</th>
+                <th style="width: 33%">CantidadTickets</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+@section Scripts{
+    <script>
+        // Start datatable "numero total de tickets por fecha"
+        if ('@ViewData["tipoReporte"]' == "Diario" || '@ViewData["tipoReporte"]' == "Mensual") {
+
+            $("#tableCount").dataTable({
+                "order": [[2, "desc"]],
+                pageLength: 10,
+                destroy: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'excel'
+                ],
+                ajax: {
+                    url: '/Tecnico/Tickets/GetCountDays',
+                    data: { "Type": '@Context.Request.Query["Type"]'},
+                    type: "GET",
+                    datatype: "json",
+                },
+                "columns": [
+                    { "data": "nombreTecnico" },
+                    { "data": "fechaCreacion" },
+                    { "data": "cantidadTickets" }
+                ],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Resultado",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 resultados",
+                    "infoFiltered": "(Filtrado de _MAX_ total Resultado)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Resultado",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+        } else if ('@ViewData["tipoReporte"]' == "Semanal") {
+            $("#tableCount").dataTable({
+                "order": [[2, "desc"]],
+                pageLength: 10,
+                destroy: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'excel'
+                ],
+                ajax: {
+                    url: '/Tecnico/Tickets/GetCountDays',
+                    data: { "Type": '@Context.Request.Query["Type"]'},
+                    type: "GET",
+                    datatype: "json",
+                },
+                "columns": [
+                    { "data": "nombreTecnico" },
+                    {
+                        "data": "fechaCreacion.item1",
+                        render: function (data, type, row) {
+                            return moment(data).format("YYYY/MM/DD") + ' - ' + moment(row.fechaCreacion.item2).format("YYYY/MM/DD");
+                        }
+                    },
+                    { "data": "cantidadTickets" }
+                ],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Resultado",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+                    "infoFiltered": "(Filtrado de _MAX_ total Resultado)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Resultado",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+        }
+        orderDatatables();
+
+        // End datatable "numero total de tickets por fecha"
+    </script>
+}
+

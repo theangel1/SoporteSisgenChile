@@ -1,0 +1,83 @@
+﻿@model IEnumerable<SoporteDteCore.Models.Ticket>
+@{
+    ViewData["Title"] = "Mis Tickets";
+}
+<div class="container">
+    <h3 class="text-info">Mis Tickets</h3>
+    <hr />
+    <table id="myTickets" class="table">
+        <thead>
+            <tr>
+                <th width="10%">Id</th>
+                <th width="15%">RutCliente</th>
+                <th width="25%">RazonSocial</th>
+                <th width="20%">FechaCreacion</th>
+                <th width="25%">Problema</th>
+                <th width="5%">Opciones</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(() => {
+            $("#myTickets").DataTable({
+                pageLength: 5,
+                destroy: true,
+                dom: 'Blfrtip',
+                buttons: [
+                    'excel'
+                ],
+                ajax: {
+                    url: "/Tecnico/Tickets/MyTickets"
+                },
+                "columns": [
+                    { "data": "id" },
+                    { "data": "rutCliente" },
+                    {
+                        "data": "razonSocial"
+                    },
+                    {
+                        "data": "fechaCreacion",
+                        render: function (data, type, row) {
+                            return moment(data).format('DD-MM-YYYY, h:mm:ss a');
+                        }
+                    },
+                   
+                    { "data": "problema" },
+                    {
+                        "mRender": function (data, type, row) {
+                            var btnEdit = '<a href="Edit/' + row.id + '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Editar Ticket">Editar<a/>';
+
+                            return btnEdit;
+                        }
+                    }
+                ],
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ Resultados",
+                    "infoEmpty": "Mostrando 0 to 0 of 0 resultados",
+                    "infoFiltered": "(Filtrado de _MAX_ total Resultados)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ Resultados",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "Sin resultados encontrados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+            orderDatatables();
+        });
+    </script>
+}

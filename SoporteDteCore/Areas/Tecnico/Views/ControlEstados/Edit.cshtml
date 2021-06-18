@@ -1,0 +1,208 @@
+﻿@model SoporteDteCore.Models.Control.ControlEstado
+
+@{
+    ViewData["Title"] = "Actualizar Estado";
+}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6">
+            <h1 class="text-primary">Actualizar</h1>
+
+            <h4 class="text-secondary">Control de Estado</h4>
+        </div>
+        @if (Model.Estado.ToString() == "SOLICITADO")
+        {
+            <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6" id="divEnvioSolicitud">
+                <form asp-controller="ControlEstados" asp-action="EnvioEmailSolicitud">
+                    <input asp-for="Email" class="form-control" hidden name="emailSolicitud" />
+                    <input asp-for="Id" class="form-control" hidden name="idControl" />
+                    <input type="submit" class="btn btn-primary btn-lg col-sm-12 col-md-12 col-lg-6 col-xl-6" value="Enviar Correo de Solicitud" />
+                </form>
+            </div>
+        }
+
+    </div>
+
+    <hr />
+
+    <form asp-action="Edit">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row">
+            <div class="form-group col-2">
+                <label asp-for="RutCliente" class="control-label"></label>
+                <input asp-for="RutCliente" class="form-control" onblur="valRut('rut');" id="rut" placeholder="Ej. 7616082-1" readonly />
+                <span asp-validation-for="RutCliente" class="text-danger"></span>
+            </div>
+
+            <div class="form-group col-lg-3">
+                <label asp-for="TipoServicio" class="control-label"></label>
+                <input asp-for="TipoServicio" class="form-control" disabled />
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-8">
+                <label asp-for="RazonSocial" class="control-label"></label>
+                <input asp-for="RazonSocial" class="form-control" />
+                <span asp-validation-for="RazonSocial" class="text-danger"></span>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label class="control-label">Estado actual:</label>
+                <label style="color:forestgreen" class="form-control" readonly>@Model.Estado</label>
+            </div>
+
+            <div class="form-group col-md-4">
+                <label class="control-label">Estado siguiente:</label>
+                <select asp-for="Estado" class="form-control">
+
+                    @switch (Model.Estado)
+                    {
+                        case SoporteDteCore.Models.Control.EstadoCertificacion.SOLICITADO:
+                            <option value="1">CERTIFICACION</option>
+                            break;
+                        case SoporteDteCore.Models.Control.EstadoCertificacion.CERTIFICACION:
+                            <option value="2">VERIFICACION</option>
+                            break;
+                        case SoporteDteCore.Models.Control.EstadoCertificacion.VERIFICACION:
+                            <option value="3">INSTALACION</option>
+                            break;
+                        case SoporteDteCore.Models.Control.EstadoCertificacion.INSTALACION:
+                            <option value="4">FIN_PROCESO</option>
+                            break;
+                        case SoporteDteCore.Models.Control.EstadoCertificacion.FIN_PROCESO:
+                            <option value="4">FIN_PROCESO</option>
+                            break;
+                        default:
+                            break;
+                    }
+
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-md-4">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" type="email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group col-md-4">
+                <label asp-for="Telefono" class="control-label"></label>
+                <input asp-for="Telefono" class="form-control" />
+                <span asp-validation-for="Telefono" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row col-lg-12">
+
+            <table class="table table-hover table-borderless" id="tablaDetalle">
+                <thead>
+                    <tr>
+                        <th>Observación</th>
+                        <th>Usuario</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.ControlDetalles.Count < 1)
+                    {
+                        <tr>
+                            <td style="color:red">Sin observaciones</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @for (int i = 0; i < Model.ControlDetalles.Count; i++)
+                        {
+                            <tr>
+                                <td>
+                                    <textarea required asp-for="ControlDetalles[i].Observacion" class="form-control" rows="3" cols="50" readonly></textarea>
+                                </td>
+                                <td>
+                                    <input class="form-control" asp-for="ControlDetalles[i].Usuario" readonly />
+                                    <input type="hidden" asp-for="ControlDetalles[i].Fecha" readonly />
+                                </td>
+
+                            </tr>
+
+                        }
+                    }
+                </tbody>
+            </table>
+            <div style="margin:auto">
+                <button type="button" id="btnAgregaLineaDet" class="btn btn-outline-success btn-sm" onclick="agregarLineaDet()"
+                        data-toggle="tooltip" data-placement="top" title="Agregar observación">
+                    <i class="fas fa-plus"></i>Agregar línea de observacion
+                </button>
+            </div>
+
+        </div>
+        <hr />
+        <div class="form-group col-md-8 text-center">
+
+            <input type="submit" asp-route-obs="false" value="Actualizar Observación" class="btn btn-warning" /> |
+            <a asp-action="Index">Volver a control de estados</a> |
+            @if (Model.Estado.Equals(SoporteDteCore.Models.Control.EstadoCertificacion.FIN_PROCESO))
+            {
+              
+            }
+            else
+            {
+                <input type="submit" asp-route-obs="true" value="Siguiente estado" class="btn btn-primary" />
+            }
+        </div>
+    </form>
+</div>
+<hr />
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        if (@Model.ControlDetalles.Count== 0)
+        {
+            @Model.ControlDetalles.Count ==1;
+        }
+
+        var counter = @Model.ControlDetalles.Count;
+
+        function agregarLineaDet() {
+
+            var tabla = document.getElementById("tablaDetalle");
+            var i = document.getElementsByName("ControlDetalles[" + (counter - 1) + "].Observacion").length + counter;
+            var row1 = tabla.insertRow(i);
+            var cell1 = row1.insertCell(0);
+            var cell2 = row1.insertCell(1)
+            var cell8 = row1.insertCell(2)
+
+            cell1.innerHTML = "<textarea asp-for='ControlDetalles[" + counter + "].Observacion' class='form-control' name='ControlDetalles[" + counter + "].Observacion' id='ControlDetalles[" + counter + "].Observacion' rows='3' cols='50'></textarea> ";
+            cell2.innerHTML = "<input asp-for='ControlDetalles[" + counter + "].Usuario' class='form-control' name='ControlDetalles[" + counter + "].Usuario' id='ControlDetalles[" + counter + "].Usuario' readonly value='@User.Identity.Name.Substring(0, User.Identity.Name.ToString().LastIndexOf("@")).ToUpper()' /> ";
+            cell8.innerHTML = '<button type="button" id="btnEliminaLineaDet" class="btn btn-outline-danger" onclick="eliminarLineaDet(this);"><i class="fas fa-minus"></i></button>';
+            counter++;
+
+        }
+
+        function eliminarLineaDet(boton) {
+            var tabla = document.getElementById("tablaDetalle");
+            var filas = tabla.rows.length;
+
+            if (filas > 2) {
+                var indice = boton.parentNode.parentNode.rowIndex;
+                tabla.deleteRow(-1);
+                counter--;
+            }
+        }
+
+    </script>
+
+    @if (ViewData["CorreoSolicitud"] != null)
+    {
+        <script>
+            Swal.fire("¡Exito!", '@ViewData["CorreoSolicitud"]', "success");
+            $("#divEnvioSolicitud").hide();
+        </script>
+    }
+}
